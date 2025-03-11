@@ -1,0 +1,76 @@
+# Binaries
+bin/
+obj/
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config for Windows
+Desktop.ini
+$RECYCLE.BIN/
+
+# Logs
+*.log
+
+# Visual Studio specific
+.vscode/
+.vs/
+_ReSharper*/
+*.resharper
+*.sln.ide
+*.tmproj
+
+# Rider
+.idea/
+
+# Web
+clientbin/
+publish/
+wwwroot/
+
+# DotNet Framework specific
+project.lock.json
+project.fragment.lock.json
+artifacts/
+*.pidb
+*.log
+*.tlog
+*.sln.ide
+*.suo
+*.user
+*.userprefs
+
+# Build Results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa]pp[Dd]ata/
+[Ll]ogs/
+[Tt]emp/
+
+# Resharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+resharper.xml
+_ReSharper.Caches/
+
+# Other extensions
+*.swp
+*.bak
+*.swm
+

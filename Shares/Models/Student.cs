@@ -16,4 +16,9 @@ public partial class Student
     public int? ClassId { get; set; }
 
     public virtual Class? Class { get; set; }
+
+    public override string ToString()
+    {
+        return $"Id: {Id}, Name: {Name}, Date of Birth: {DateOfBirth}, Address: {Address}, Class: {Class?.Name}";
+    }
 }

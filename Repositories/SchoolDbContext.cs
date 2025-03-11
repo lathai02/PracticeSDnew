@@ -25,12 +25,14 @@ public partial class SchoolDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        var configuration = new ConfigurationBuilder()
-             .SetBasePath(Directory.GetCurrentDirectory())
-             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-             .Build();
 
-        string connectionString = configuration.GetConnectionString("MyConnectionString");
+        var configuration = new ConfigurationBuilder()
+          .SetBasePath(Directory.GetCurrentDirectory())
+          .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+          .Build();
+
+        string connectionString = configuration.GetConnectionString("MyConnectionString") ?? throw new InvalidOperationException("Cannot find string connection!");
+
         optionsBuilder.UseSqlServer(connectionString);
     }
 

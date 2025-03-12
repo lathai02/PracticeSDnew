@@ -15,6 +15,7 @@ namespace Services.Implements
     {
         private readonly IStudentRepository _studentRepository;
         private readonly IClassRepository _classRepository;
+
         public StudentService(IStudentRepository studentRepository, IClassRepository classRepository)
         {
             _studentRepository = studentRepository;
@@ -38,7 +39,6 @@ namespace Services.Implements
                 Name = studentName,
                 Address = studentAddress,
                 DateOfBirth = studentDob,
-                //ClassId = classId,
                 Class = _classRepository.GetById(classId)
             };
 
@@ -109,7 +109,7 @@ namespace Services.Implements
                 Name = studentName,
                 Address = studentAddress,
                 DateOfBirth = studentDob,
-                ClassId = classId
+                Class = _classRepository.GetById(classId)
             };
 
             _studentRepository.Update(studentUpdated);

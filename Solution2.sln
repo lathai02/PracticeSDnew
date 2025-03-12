@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repositories", "Repositorie
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shares", "Shares\Shares.csproj", "{818A9EDD-4551-4EC9-AAD9-BFB5541F3CE6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nhibernate", "Nhibernate\Nhibernate.csproj", "{57CCFF0B-E976-46B1-9CB5-F7231BBFEF7B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RepositoriesUseNHibernate", "RepositoryUseNHibernate\RepositoriesUseNHibernate.csproj", "{34D309E3-696F-48A0-9C62-C4D3200F5529}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +35,10 @@ Global
 		{818A9EDD-4551-4EC9-AAD9-BFB5541F3CE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{818A9EDD-4551-4EC9-AAD9-BFB5541F3CE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{818A9EDD-4551-4EC9-AAD9-BFB5541F3CE6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{57CCFF0B-E976-46B1-9CB5-F7231BBFEF7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{57CCFF0B-E976-46B1-9CB5-F7231BBFEF7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{57CCFF0B-E976-46B1-9CB5-F7231BBFEF7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{57CCFF0B-E976-46B1-9CB5-F7231BBFEF7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34D309E3-696F-48A0-9C62-C4D3200F5529}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34D309E3-696F-48A0-9C62-C4D3200F5529}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34D309E3-696F-48A0-9C62-C4D3200F5529}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34D309E3-696F-48A0-9C62-C4D3200F5529}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

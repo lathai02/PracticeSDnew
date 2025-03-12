@@ -59,6 +59,7 @@ namespace Controllers
                             _studentService.DeleteStudent();
                             break;
                         case 5:
+                            _studentService.SortStudentListByName();
                             break;
                         case 6:
                             _studentService.SearchByStudentId();

@@ -27,18 +27,19 @@ namespace Services.Implements
 
             var studentName = StringUtils.InputString("Enter student name:");
             var studentAddress = StringUtils.InputString("Enter student address:");
-            var studentDob = DateTimeUtils.InputDateOnly("Enter student dob (dd/MM/yyyy): ", "dd/MM/yyyy");
+            var studentDob = DateTimeUtils.InputDateTime("Enter student dob (yyyy/MM/dd): ");
 
             var classes = _classRepository.GetAllClass();
             StringUtils.PrintList(classes, "Class List");
-            var classId = NumberUtils.InputIntegerNumber("Enter class id: ", 1, classes.Count - 1);
+            var classId = NumberUtils.InputIntegerNumber("Enter class id: ", 1, classes.Count);
             var student = new Student
             {
                 Id = studentId,
                 Name = studentName,
                 Address = studentAddress,
                 DateOfBirth = studentDob,
-                ClassId = classId
+                //ClassId = classId,
+                Class = _classRepository.GetClassById(classId)
             };
 
             _studentRepository.AddStudent(student);
@@ -97,7 +98,7 @@ namespace Services.Implements
 
             var studentName = StringUtils.InputString("Enter student name:");
             var studentAddress = StringUtils.InputString("Enter student address:");
-            var studentDob = DateTimeUtils.InputDateOnly("Enter student dob (dd/MM/yyyy): ", "dd/MM/yyyy");
+            var studentDob = DateTimeUtils.InputDateTime("Enter student dob (yyyy/MM/dd): ");
 
             var classes = _classRepository.GetAllClass();
             StringUtils.PrintList(classes, "Class List");

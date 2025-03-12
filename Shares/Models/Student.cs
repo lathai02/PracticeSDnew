@@ -5,15 +5,15 @@ namespace Shares.Models;
 
 public partial class Student
 {
-    public string Id { get; set; } = null!;
+    public virtual string Id { get; set; } = null!;
 
-    public string Name { get; set; } = null!;
+    public virtual string Name { get; set; } = null!;
 
-    public DateOnly DateOfBirth { get; set; }
+    public virtual DateTime DateOfBirth { get; set; }
 
-    public string Address { get; set; } = null!;
+    public virtual string Address { get; set; } = null!;
 
-    public int? ClassId { get; set; }
+    public virtual int? ClassId { get; set; }
 
     public virtual Class? Class { get; set; }
 

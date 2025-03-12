@@ -30,7 +30,7 @@ namespace Controllers
                 .AddSingleton(factory =>
                 {
                     return Fluently.Configure()
-                         .Database(MsSqlConfiguration.MsSql2012.ConnectionString(connectionString).ShowSql())
+                         .Database(MsSqlConfiguration.MsSql2012.ConnectionString(connectionString))
                          .Mappings(m => m.FluentMappings
                              .AddFromAssemblyOf<StudentMap>()
                              .AddFromAssemblyOf<ClassMap>()

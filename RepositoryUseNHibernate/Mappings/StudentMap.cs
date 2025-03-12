@@ -18,7 +18,7 @@ namespace RepositoriesUseNHibernate.Mappings
             Map(x => x.Name);
             Map(x => x.DateOfBirth);
             Map(x => x.Address);
-            Map(x => x.ClassId).Nullable();
+            //Map(x => x.ClassId).Nullable();
 
             References(x => x.Class).Column("ClassId").LazyLoad();
         }

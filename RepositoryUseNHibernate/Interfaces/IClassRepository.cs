@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace RepositoriesUseNHibernate.Interfaces
 {
-    public interface IClassRepository
+    public interface IClassRepository : IGenericRepository<Class, int>
     {
-        List<Class> GetAllClass();
-        Class? GetClassById(int id);
+        List<Class> GetAllClassWithTeacher();
     }
 }

@@ -29,7 +29,7 @@ namespace Services.Implements
             var studentAddress = StringUtils.InputString("Enter student address:");
             var studentDob = DateTimeUtils.InputDateTime("Enter student dob (yyyy/MM/dd): ");
 
-            var classes = _classRepository.GetAllClass();
+            var classes = _classRepository.GetAllClassWithTeacher();
             StringUtils.PrintList(classes, "Class List");
             var classId = NumberUtils.InputIntegerNumber("Enter class id: ", 1, classes.Count);
             var student = new Student
@@ -39,17 +39,17 @@ namespace Services.Implements
                 Address = studentAddress,
                 DateOfBirth = studentDob,
                 //ClassId = classId,
-                Class = _classRepository.GetClassById(classId)
+                Class = _classRepository.GetById(classId)
             };
 
-            _studentRepository.AddStudent(student);
+            _studentRepository.Add(student);
         }
 
         public void DeleteStudent()
         {
             var studentId = StringUtils.InputString("Enter student id to delete:", "^[A-Za-z]{2}\\d{6}$");
 
-            var student = _studentRepository.GetStudentById(studentId);
+            var student = _studentRepository.GetById(studentId);
 
             if (student == null)
             {
@@ -57,7 +57,7 @@ namespace Services.Implements
                 return;
             }
 
-            _studentRepository.DeleteStudent(student);
+            _studentRepository.Delete(student);
         }
 
         public void PrintStudentList()
@@ -70,7 +70,7 @@ namespace Services.Implements
         {
             var studentId = StringUtils.InputString("Enter student id you want to find:", "^[A-Za-z]{2}\\d{6}$");
 
-            var student = _studentRepository.GetStudentById(studentId);
+            var student = _studentRepository.GetById(studentId);
 
             if (student == null)
             {
@@ -88,7 +88,7 @@ namespace Services.Implements
         public void UpdateStudent()
         {
             var studentId = StringUtils.InputString("Enter student id to update:", "^[A-Za-z]{2}\\d{6}$");
-            var student = _studentRepository.GetStudentById(studentId);
+            var student = _studentRepository.GetById(studentId);
 
             if (student == null)
             {
@@ -100,7 +100,7 @@ namespace Services.Implements
             var studentAddress = StringUtils.InputString("Enter student address:");
             var studentDob = DateTimeUtils.InputDateTime("Enter student dob (yyyy/MM/dd): ");
 
-            var classes = _classRepository.GetAllClass();
+            var classes = _classRepository.GetAllClassWithTeacher();
             StringUtils.PrintList(classes, "Class List");
             var classId = NumberUtils.InputIntegerNumber("Enter class id: ", 1, classes.Count);
             var studentUpdated = new Student
@@ -112,7 +112,7 @@ namespace Services.Implements
                 ClassId = classId
             };
 
-            _studentRepository.UpdateStudent(studentUpdated, student);
+            _studentRepository.Update(studentUpdated);
         }
     }
 }

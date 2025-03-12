@@ -10,28 +10,21 @@ using System.Threading.Tasks;
 
 namespace RepositoriesUseNHibernate.Implements
 {
-    public class ClassRepository : IClassRepository
+    public class ClassRepository : GenericRepository<Class, int>, IClassRepository
     {
         private readonly ISession _session;
 
-        public ClassRepository(ISession session)
+        public ClassRepository(ISession session) : base(session)
         {
             _session = session;
         }
 
-        public List<Class> GetAllClass()
+        public List<Class> GetAllClassWithTeacher()
         {
             return _session
                  .Query<Class>()
                  .Fetch(c => c.Teacher)
                  .ToList();
-        }
-
-        public Class? GetClassById(int id)
-        {
-            return _session
-                .Query<Class>()
-                .FirstOrDefault(c => c.Id == id);
         }
     }
 }

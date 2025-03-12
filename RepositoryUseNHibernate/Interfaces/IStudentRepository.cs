@@ -7,13 +7,9 @@ using System.Threading.Tasks;
 
 namespace RepositoriesUseNHibernate.Interfaces
 {
-    public interface IStudentRepository
+    public interface IStudentRepository : IGenericRepository<Student, string>
     {
         List<Student> GetStudentList();
-        void AddStudent(Student student);
-        Student? GetStudentById(string studentId);
-        void UpdateStudent(Student studentUpdated, Student oldStudent);
-        void DeleteStudent(Student student);
         List<Student> GetStudentListSortByName();
     }
 }

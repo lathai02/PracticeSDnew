@@ -9,7 +9,7 @@ namespace RepositoriesUseNHibernate.Interfaces
 {
     public interface IStudentRepository : IGenericRepository<Student, string>
     {
-        List<Student> GetStudentList();
+        List<Student> GetStudentListWithClass();
         List<Student> GetStudentListSortByName();
     }
 }

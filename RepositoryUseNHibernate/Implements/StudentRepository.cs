@@ -19,7 +19,7 @@ namespace RepositoriesUseNHibernate.Implements
             _session = session;
         }
 
-        public List<Student> GetStudentList()
+        public List<Student> GetStudentListWithClass()
         {
             return _session.Query<Student>().Fetch(s => s.Class).ToList();
         }

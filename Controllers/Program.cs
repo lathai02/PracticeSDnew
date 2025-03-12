@@ -40,8 +40,8 @@ namespace Controllers
                 .AddScoped(provider => provider.GetRequiredService<ISessionFactory>().OpenSession())
                 .AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>))
                 .AddSingleton<Controllers>()
-                //.AddDbContext<SchoolDbContext>()
                 .AddSingleton<IStudentService, StudentService>()
+                .AddSingleton<IClassService, ClassService>()
                 .AddSingleton<IStudentRepository, StudentRepository>()
                 .AddSingleton<IClassRepository, ClassRepository>()
                 .BuildServiceProvider();

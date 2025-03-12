@@ -12,6 +12,7 @@ namespace Shares.Utils
         public static string InputString(string message, string? pattern = null)
         {
             string? input;
+
             while (true)
             {
                 Console.Write(message);

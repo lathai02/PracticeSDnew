@@ -1,6 +1,7 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using RepositoriesUseNHibernate.Interfaces;
 using Services.Interfaces;
+using Shares.Constants;
 using Shares.Models;
 using Shares.Utils;
 using System;
@@ -14,70 +15,26 @@ namespace Services.Implements
     public class StudentService : IStudentService
     {
         private readonly IStudentRepository _studentRepository;
-        private readonly IClassRepository _classRepository;
+        private readonly IClassService _classService;
 
-        public StudentService(IStudentRepository studentRepository, IClassRepository classRepository)
+        public StudentService(IStudentRepository studentRepository, IClassService classService)
         {
             _studentRepository = studentRepository;
-            _classRepository = classRepository;
-        }
-
-        public void UpdateStudent()
-        {
-            var studentId = StringUtils.InputString("Enter student id to update:", "^[A-Za-z]{2}\\d{6}$");
-            var student = _studentRepository.GetById(studentId);
-
-            if (student == null)
-            {
-                Console.WriteLine("Student not found!");
-                return;
-            }
-
-            var studentName = StringUtils.InputString("Enter student name:");
-            var studentAddress = StringUtils.InputString("Enter student address:");
-            var studentDob = DateTimeUtils.InputDateTime("Enter student dob (yyyy/MM/dd): ");
-
-            var classes = _classRepository.GetAllClassWithTeacher();
-            StringUtils.PrintList(classes, "Class List");
-            var classId = NumberUtils.InputIntegerNumber("Enter class id: ", 1, classes.Count);
-            var studentUpdated = new Student
-            {
-                Id = studentId,
-                Name = studentName,
-                Address = studentAddress,
-                DateOfBirth = studentDob,
-                Class = _classRepository.GetById(classId)
-            };
-
-            _studentRepository.Update(studentUpdated);
+            _classService = classService;
         }
 
         public void AddStudent()
         {
-            var studentId = StringUtils.InputString("Enter student id:", "^[A-Za-z]{2}\\d{6}$");
+            var studentId = StringUtils.InputString("Enter student id:", AppConstants.StudentIdPattern);
 
-            var studentName = StringUtils.InputString("Enter student name:");
-            var studentAddress = StringUtils.InputString("Enter student address:");
-            var studentDob = DateTimeUtils.InputDateTime("Enter student dob (yyyy/MM/dd): ");
-
-            var classes = _classRepository.GetAllClassWithTeacher();
-            StringUtils.PrintList(classes, "Class List");
-            var classId = NumberUtils.InputIntegerNumber("Enter class id: ", 1, classes.Count);
-            var student = new Student
-            {
-                Id = studentId,
-                Name = studentName,
-                Address = studentAddress,
-                DateOfBirth = studentDob,
-                Class = _classRepository.GetById(classId)
-            };
-
+            var student = GetStudentInfo(studentId);
             _studentRepository.Add(student);
+            Console.WriteLine("Student added successfully.");
         }
 
-        public void DeleteStudent()
+        public void UpdateStudent()
         {
-            var studentId = StringUtils.InputString("Enter student id to delete:", "^[A-Za-z]{2}\\d{6}$");
+            var studentId = StringUtils.InputString("Enter student id to update:", AppConstants.StudentIdPattern);
             var student = _studentRepository.GetById(studentId);
 
             if (student == null)
@@ -86,7 +43,32 @@ namespace Services.Implements
                 return;
             }
 
+            var studentUpdated = GetStudentInfo(studentId);
+            _studentRepository.Update(studentUpdated);
+            Console.WriteLine("Student updated successfully.");
+        }
+
+        public void DeleteStudent()
+        {
+            var student = FindStudentById();
+            if (student == null)
+            {
+                return;
+            }
+
             _studentRepository.Delete(student);
+            Console.WriteLine("Student deleted successfully.");
+        }
+
+        public void SearchByStudentId()
+        {
+            var student = FindStudentById();
+            if (student == null)
+            {
+                return;
+            }
+
+            Console.WriteLine(student.ToString());
         }
 
         public void PrintStudentList()
@@ -95,23 +77,42 @@ namespace Services.Implements
             StringUtils.PrintList(students, "Student List");
         }
 
-        public void SearchByStudentId()
+        public void SortStudentListByName()
         {
-            var studentId = StringUtils.InputString("Enter student id you want to find:", "^[A-Za-z]{2}\\d{6}$");
+            StringUtils.PrintList(_studentRepository.GetStudentListSortByName(), "Student List");
+        }
 
+        private Student GetStudentInfo(string studentId = "")
+        {
+            var studentName = StringUtils.InputString("Enter student name:");
+            var studentAddress = StringUtils.InputString("Enter student address:");
+            var studentDob = DateTimeUtils.InputDateTime($"Enter student dob ({AppConstants.DateFormat}): ");
+
+            var classes = _classService.GetAllClassWithTeacher();
+            StringUtils.PrintList(classes, "Class List");
+            var classId = NumberUtils.InputIntegerNumber("Enter class id: ", 1, classes.Count);
+
+            return new Student
+            {
+                Id = studentId,
+                Name = studentName,
+                Address = studentAddress,
+                DateOfBirth = studentDob,
+                Class = _classService.GetClassById(classId)
+            };
+        }
+
+        private Student? FindStudentById()
+        {
+            var studentId = StringUtils.InputString("Enter student id:", AppConstants.StudentIdPattern);
             var student = _studentRepository.GetById(studentId);
 
             if (student == null)
             {
                 Console.WriteLine("Student not found!");
-                return;
             }
-            Console.WriteLine(student.ToString());
-        }
 
-        public void SortStudentListByName()
-        {
-            StringUtils.PrintList(_studentRepository.GetStudentListSortByName(), "Student List");
+            return student;
         }
     }
 }

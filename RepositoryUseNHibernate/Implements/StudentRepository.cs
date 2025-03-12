@@ -21,7 +21,20 @@ namespace RepositoriesUseNHibernate.Implements
 
         public async Task<List<Student>> GetStudentListWithClassAsync()
         {
-            return await _session.Query<Student>().Fetch(s => s.Class).ToListAsync();
+            try
+            {
+                Console.WriteLine($"Session open: {_session.IsOpen}");
+                var res = _session.Query<Student>().Fetch(s => s.Class);
+                var res2 = await res.ToListAsync();
+                Console.WriteLine($"After query, session open: {_session.IsOpen}");
+                return res2;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+
+            return new List<Student>();
         }
 
         public async Task<List<Student>> GetStudentListSortByNameAsync()

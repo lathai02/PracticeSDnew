@@ -17,7 +17,7 @@ namespace Controllers
 {
     static class Program
     {
-        static void Main()
+        static async Task Main()
         {
             var configuration = new ConfigurationBuilder()
                  .SetBasePath(Directory.GetCurrentDirectory())
@@ -47,7 +47,7 @@ namespace Controllers
                 .BuildServiceProvider();
 
             var studentController = serviceProvider.GetRequiredService<Controllers>();
-            studentController.ManageStudent();
+            await studentController.ManageStudentAsync();
         }
     }
 }

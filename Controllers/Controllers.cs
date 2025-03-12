@@ -17,7 +17,7 @@ namespace Controllers
             _studentService = studentService;
         }
 
-        public void ManageStudent()
+        public async Task ManageStudentAsync()
         {
             List<string> menuFeature = new List<string> {
                 "1.Show student list:",
@@ -47,22 +47,22 @@ namespace Controllers
                     switch (chooseNum)
                     {
                         case 1:
-                            _studentService.PrintStudentListAsync();
+                            await _studentService.PrintStudentListAsync();
                             break;
                         case 2:
-                            _studentService.AddStudentAsync();
+                            await _studentService.AddStudentAsync();
                             break;
                         case 3:
-                            _studentService.UpdateStudentAsync();
+                            await _studentService.UpdateStudentAsync();
                             break;
                         case 4:
-                            _studentService.DeleteStudentAsync();
+                            await _studentService.DeleteStudentAsync();
                             break;
                         case 5:
-                            _studentService.SortStudentListByNameAsync();
+                            await _studentService.SortStudentListByNameAsync();
                             break;
                         case 6:
-                            _studentService.SearchByStudentIdAsync();
+                            await _studentService.SearchByStudentIdAsync();
                             break;
                         case 7:
                             exitFlag = true;

@@ -21,9 +21,9 @@ namespace Controllers
         {
             List<string> menuFeature = new List<string> {
                 "1.Show student list:",
-                "2.Add Student:",
-                "3.Update student by Id:",
-                "4.Delete student by Id:",
+                "2.AddAsync Student:",
+                "3.UpdateAsync student by Id:",
+                "4.DeleteAsync student by Id:",
                 "5.Sort student list by name:",
                 "6.Search by student id:",
                 "7.Exit." };
@@ -47,22 +47,22 @@ namespace Controllers
                     switch (chooseNum)
                     {
                         case 1:
-                            _studentService.PrintStudentList();
+                            _studentService.PrintStudentListAsync();
                             break;
                         case 2:
-                            _studentService.AddStudent();
+                            _studentService.AddStudentAsync();
                             break;
                         case 3:
-                            _studentService.UpdateStudent();
+                            _studentService.UpdateStudentAsync();
                             break;
                         case 4:
-                            _studentService.DeleteStudent();
+                            _studentService.DeleteStudentAsync();
                             break;
                         case 5:
-                            _studentService.SortStudentListByName();
+                            _studentService.SortStudentListByNameAsync();
                             break;
                         case 6:
-                            _studentService.SearchByStudentId();
+                            _studentService.SearchByStudentIdAsync();
                             break;
                         case 7:
                             exitFlag = true;

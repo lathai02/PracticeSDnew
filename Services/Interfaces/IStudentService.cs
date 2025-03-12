@@ -8,11 +8,11 @@ namespace Services.Interfaces
 {
     public interface IStudentService
     {
-        void PrintStudentList();
-        void AddStudent();
-        void UpdateStudent();
-        void DeleteStudent();
-        void SortStudentListByName();
-        void SearchByStudentId();
+        Task PrintStudentListAsync();
+        Task AddStudentAsync();
+        Task UpdateStudentAsync();
+        Task DeleteStudentAsync();
+        Task SortStudentListByNameAsync();
+        Task SearchByStudentIdAsync();
     }
 }

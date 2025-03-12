@@ -19,12 +19,12 @@ namespace RepositoriesUseNHibernate.Implements
             _session = session;
         }
 
-        public List<Class> GetAllClassWithTeacher()
+        public async Task<List<Class>> GetAllClassWithTeacherAsync()
         {
-            return _session
+            return await _session
                  .Query<Class>()
                  .Fetch(c => c.Teacher)
-                 .ToList();
+                 .ToListAsync();
         }
     }
 }

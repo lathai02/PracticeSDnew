@@ -9,7 +9,7 @@ namespace Services.Interfaces
 {
     public interface IClassService
     {
-        List<Class> GetAllClassWithTeacher();
-        Class? GetClassById(int id);
+        Task<List<Class>> GetAllClassWithTeacherAsync();
+        Task<Class?> GetClassByIdAsync(int id);
     }
 }

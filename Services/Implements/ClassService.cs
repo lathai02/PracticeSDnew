@@ -18,14 +18,14 @@ namespace Services.Implements
             _classRepository = classRepository;
         }
 
-        public List<Class> GetAllClassWithTeacher()
+        public async Task<List<Class>> GetAllClassWithTeacherAsync()
         {
-            return _classRepository.GetAllClassWithTeacher();
+            return await _classRepository.GetAllClassWithTeacherAsync();
         }
 
-        public Class? GetClassById(int id)
+        public async Task<Class?> GetClassByIdAsync(int id)
         {
-            return _classRepository.GetById(id);
+            return await _classRepository.GetByIdAsync(id);
         }
     }
 }

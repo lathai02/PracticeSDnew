@@ -1,4 +1,5 @@
 ﻿using NHibernate;
+using NHibernate.Linq;
 using RepositoriesUseNHibernate.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -17,40 +18,40 @@ namespace RepositoriesUseNHibernate.Implements
             _session = session;
         }
 
-        public List<T> GetAll()
+        public async Task<List<T>> GetAllAsync()
         {
-            return _session.Query<T>().ToList();
+            return await _session.Query<T>().ToListAsync();
         }
 
-        public T? GetById(TKey id)
+        public async Task<T?> GetByIdAsync(TKey id)
         {
-            return _session.Get<T>(id);
+            return await _session.GetAsync<T>(id);
         }
 
-        public void Add(T entity)
+        public async Task AddAsync(T entity)
         {
             using (var transaction = _session.BeginTransaction())
             {
-                _session.Save(entity);
-                transaction.Commit();
+                await _session.SaveAsync(entity);
+                await transaction.CommitAsync();
             }
         }
 
-        public void Update(T entity)
+        public async Task UpdateAsync(T entity)
         {
             using (var transaction = _session.BeginTransaction())
             {
-                _session.Merge(entity);
-                transaction.Commit();
+                await _session.MergeAsync(entity);
+                await transaction.CommitAsync();
             }
         }
 
-        public void Delete(T entity)
+        public async Task DeleteAsync(T entity)
         {
             using (var transaction = _session.BeginTransaction())
             {
-                _session.Delete(entity);
-                transaction.Commit();
+                await _session.DeleteAsync(entity);
+                await transaction.CommitAsync();
             }
         }
     }

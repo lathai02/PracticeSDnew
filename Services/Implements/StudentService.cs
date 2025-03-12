@@ -23,19 +23,19 @@ namespace Services.Implements
             _classService = classService;
         }
 
-        public void AddStudent()
+        public async Task AddStudentAsync()
         {
             var studentId = StringUtils.InputString("Enter student id:", AppConstants.StudentIdPattern);
 
-            var student = GetStudentInfo(studentId);
-            _studentRepository.Add(student);
+            var student = await GetStudentInfo(studentId);
+            await _studentRepository.AddAsync(student);
             Console.WriteLine("Student added successfully.");
         }
 
-        public void UpdateStudent()
+        public async Task UpdateStudentAsync()
         {
             var studentId = StringUtils.InputString("Enter student id to update:", AppConstants.StudentIdPattern);
-            var student = _studentRepository.GetById(studentId);
+            var student = await _studentRepository.GetByIdAsync(studentId);
 
             if (student == null)
             {
@@ -43,26 +43,26 @@ namespace Services.Implements
                 return;
             }
 
-            var studentUpdated = GetStudentInfo(studentId);
-            _studentRepository.Update(studentUpdated);
+            var studentUpdated = await GetStudentInfo(studentId);
+            await _studentRepository.UpdateAsync(studentUpdated);
             Console.WriteLine("Student updated successfully.");
         }
 
-        public void DeleteStudent()
+        public async Task DeleteStudentAsync()
         {
-            var student = FindStudentById();
+            var student = await FindStudentById();
             if (student == null)
             {
                 return;
             }
 
-            _studentRepository.Delete(student);
+            await _studentRepository.DeleteAsync(student);
             Console.WriteLine("Student deleted successfully.");
         }
 
-        public void SearchByStudentId()
+        public async Task SearchByStudentIdAsync()
         {
-            var student = FindStudentById();
+            var student = await FindStudentById();
             if (student == null)
             {
                 return;
@@ -71,24 +71,24 @@ namespace Services.Implements
             Console.WriteLine(student.ToString());
         }
 
-        public void PrintStudentList()
+        public async Task PrintStudentListAsync()
         {
-            var students = _studentRepository.GetStudentListWithClass();
+            var students = await _studentRepository.GetStudentListWithClassAsync();
             StringUtils.PrintList(students, "Student List");
         }
 
-        public void SortStudentListByName()
+        public async Task SortStudentListByNameAsync()
         {
-            StringUtils.PrintList(_studentRepository.GetStudentListSortByName(), "Student List");
+            StringUtils.PrintList(await _studentRepository.GetStudentListSortByNameAsync(), "Student List");
         }
 
-        private Student GetStudentInfo(string studentId = "")
+        private async Task<Student> GetStudentInfo(string studentId = "")
         {
             var studentName = StringUtils.InputString("Enter student name:");
             var studentAddress = StringUtils.InputString("Enter student address:");
             var studentDob = DateTimeUtils.InputDateTime($"Enter student dob ({AppConstants.DateFormat}): ");
 
-            var classes = _classService.GetAllClassWithTeacher();
+            var classes = await _classService.GetAllClassWithTeacherAsync();
             StringUtils.PrintList(classes, "Class List");
             var classId = NumberUtils.InputIntegerNumber("Enter class id: ", 1, classes.Count);
 
@@ -98,14 +98,14 @@ namespace Services.Implements
                 Name = studentName,
                 Address = studentAddress,
                 DateOfBirth = studentDob,
-                Class = _classService.GetClassById(classId)
+                Class = await _classService.GetClassByIdAsync(classId)
             };
         }
 
-        private Student? FindStudentById()
+        private async Task<Student?> FindStudentById()
         {
             var studentId = StringUtils.InputString("Enter student id:", AppConstants.StudentIdPattern);
-            var student = _studentRepository.GetById(studentId);
+            var student = await _studentRepository.GetByIdAsync(studentId);
 
             if (student == null)
             {

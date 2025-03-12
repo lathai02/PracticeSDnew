@@ -9,6 +9,6 @@ namespace RepositoriesUseNHibernate.Interfaces
 {
     public interface IClassRepository : IGenericRepository<Class, int>
     {
-        List<Class> GetAllClassWithTeacher();
+        Task<List<Class>> GetAllClassWithTeacherAsync();
     }
 }

@@ -8,10 +8,10 @@ namespace RepositoriesUseNHibernate.Interfaces
 {
     public interface IGenericRepository<T, TKey> where T : class
     {
-        List<T> GetAll();
-        T? GetById(TKey id);
-        void Add(T entity);
-        void Update(T entity);
-        void Delete(T entity);
+        Task<List<T>> GetAllAsync();
+        Task<T?> GetByIdAsync(TKey id);
+        Task AddAsync(T entity);
+        Task UpdateAsync(T entity);
+        Task DeleteAsync(T entity);
     }
 }

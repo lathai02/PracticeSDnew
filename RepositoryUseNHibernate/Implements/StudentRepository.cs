@@ -19,14 +19,14 @@ namespace RepositoriesUseNHibernate.Implements
             _session = session;
         }
 
-        public List<Student> GetStudentListWithClass()
+        public async Task<List<Student>> GetStudentListWithClassAsync()
         {
-            return _session.Query<Student>().Fetch(s => s.Class).ToList();
+            return await _session.Query<Student>().Fetch(s => s.Class).ToListAsync();
         }
 
-        public List<Student> GetStudentListSortByName()
+        public async Task<List<Student>> GetStudentListSortByNameAsync()
         {
-            return _session.Query<Student>().Fetch(s => s.Class).OrderBy(s => s.Name).ToList();
+            return await _session.Query<Student>().Fetch(s => s.Class).OrderBy(s => s.Name).ToListAsync();
         }
     }
 }

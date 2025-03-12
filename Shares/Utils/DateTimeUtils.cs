@@ -14,6 +14,7 @@ namespace Shares.Utils
         {
             DateTime date;
 
+
             while (true)
             {
                 Console.Write(message);

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RepositoriesUseNHibernate.Mappings
 {
-    class ClassMap : ClassMap<Class>
+    public class ClassMap : ClassMap<Class>
     {
         public ClassMap()
         {

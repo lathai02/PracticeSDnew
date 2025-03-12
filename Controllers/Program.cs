@@ -1,12 +1,13 @@
 ﻿using Controllers;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
+using FluentNHibernate.Mapping;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NHibernate;
-using Repositories;
-using Repositories.Implements;
-using Repositories.Interfaces;
+using RepositoriesUseNHibernate.Implements;
+using RepositoriesUseNHibernate.Interfaces;
+using RepositoriesUseNHibernate.Mappings;
 using Services.Implements;
 using Services.Interfaces;
 using Shares.Models;
@@ -31,9 +32,9 @@ namespace Controllers
                     return Fluently.Configure()
                          .Database(MsSqlConfiguration.MsSql2012.ConnectionString(connectionString).ShowSql())
                          .Mappings(m => m.FluentMappings
-                             .AddFromAssemblyOf<Student>()
-                             .AddFromAssemblyOf<Class>()
-                             .AddFromAssemblyOf<Teacher>())
+                             .AddFromAssemblyOf<StudentMap>()
+                             .AddFromAssemblyOf<ClassMap>()
+                             .AddFromAssemblyOf<TeacherMap>())
                          .BuildSessionFactory();
                 })
                 .AddScoped(provider => provider.GetRequiredService<ISessionFactory>().OpenSession())

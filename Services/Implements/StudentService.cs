@@ -1,5 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using Repositories.Interfaces;
+using RepositoriesUseNHibernate.Interfaces;
 using Services.Interfaces;
 using Shares.Models;
 using Shares.Utils;

@@ -25,7 +25,7 @@ namespace Services.Implements
 
         public async Task AddStudentAsync()
         {
-            var studentId = StringUtils.InputString("Enter student id:", AppConstants.StudentIdPattern);
+            var studentId = StringUtils.InputString("Enter student id:", AppConstants.STUDENT_ID_PARTERN);
 
             var student = await GetStudentInfo(studentId);
             await _studentRepository.AddAsync(student);
@@ -34,7 +34,7 @@ namespace Services.Implements
 
         public async Task UpdateStudentAsync()
         {
-            var studentId = StringUtils.InputString("Enter student id to update:", AppConstants.StudentIdPattern);
+            var studentId = StringUtils.InputString("Enter student id to update:", AppConstants.STUDENT_ID_PARTERN);
             var student = await _studentRepository.GetByIdAsync(studentId);
 
             if (student == null)
@@ -86,7 +86,7 @@ namespace Services.Implements
         {
             var studentName = StringUtils.InputString("Enter student name:");
             var studentAddress = StringUtils.InputString("Enter student address:");
-            var studentDob = DateTimeUtils.InputDateTime($"Enter student dob ({AppConstants.DateFormat}): ");
+            var studentDob = DateTimeUtils.InputDateTime($"Enter student dob ({AppConstants.DATE_FORMAT}): ");
 
             var classes = await _classService.GetAllClassWithTeacherAsync();
             StringUtils.PrintList(classes, "Class List");
@@ -104,7 +104,7 @@ namespace Services.Implements
 
         private async Task<Student?> FindStudentById()
         {
-            var studentId = StringUtils.InputString("Enter student id:", AppConstants.StudentIdPattern);
+            var studentId = StringUtils.InputString("Enter student id:", AppConstants.STUDENT_ID_PARTERN);
             var student = await _studentRepository.GetByIdAsync(studentId);
 
             if (student == null)

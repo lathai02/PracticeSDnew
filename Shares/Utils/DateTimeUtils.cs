@@ -10,7 +10,7 @@ namespace Shares.Utils
 {
     public static class DateTimeUtils
     {
-        public static DateTime InputDateTime(string message, string format = AppConstants.DateFormat)
+        public static DateTime InputDateTime(string message, string format = AppConstants.DATE_FORMAT)
         {
             DateTime date;
 

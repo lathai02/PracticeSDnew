@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shares", "Shares\Shares.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RepositoriesUseNHibernate", "RepositoryUseNHibernate\RepositoriesUseNHibernate.csproj", "{34D309E3-696F-48A0-9C62-C4D3200F5529}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RepositoryGrpc", "RepositoryGrpc\RepositoryGrpc.csproj", "{DDF3A72F-ACBA-4BAC-A3E6-AD64FFBE7658}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{34D309E3-696F-48A0-9C62-C4D3200F5529}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34D309E3-696F-48A0-9C62-C4D3200F5529}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34D309E3-696F-48A0-9C62-C4D3200F5529}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDF3A72F-ACBA-4BAC-A3E6-AD64FFBE7658}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDF3A72F-ACBA-4BAC-A3E6-AD64FFBE7658}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDF3A72F-ACBA-4BAC-A3E6-AD64FFBE7658}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDF3A72F-ACBA-4BAC-A3E6-AD64FFBE7658}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

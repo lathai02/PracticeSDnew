@@ -1,35 +1,29 @@
-﻿using FluentNHibernate.Cfg;
-using FluentNHibernate.Cfg.Db;
+﻿using FluentNHibernate.Cfg.Db;
+using FluentNHibernate.Cfg;
 using GrpcService.Services.Implements;
 using GrpcService.Services.Interfaces;
 using NHibernate;
 using ProtoBuf.Grpc.Server;
 using RepositoriesUseNHibernate.Implements;
 using RepositoriesUseNHibernate.Interfaces;
-using RepositoriesUseNHibernate.Mappings;
 using Shares.ServiceContracts;
+using RepositoriesUseNHibernate.Mappings;
 
 var builder = WebApplication.CreateBuilder(args);
-var configuration = builder.Configuration;
 
-builder.WebHost.ConfigureKestrel(options =>
-{
-    var grpcUrl = configuration["Kestrel:Endpoints:Grpc:Url"] ?? "https://localhost:5001";
-    options.ListenLocalhost(new Uri(grpcUrl).Port, listenOptions =>
-    {
-        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2;
-        listenOptions.UseHttps();
-    });
-});
-
-ConfigureServices(builder.Services, configuration);
+ConfigureServices(builder.Services);
 var app = builder.Build();
 Configure(app);
 
 await app.RunAsync();
 
-void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+void ConfigureServices(IServiceCollection services)
 {
+    var configuration = new ConfigurationBuilder()
+              .SetBasePath(Directory.GetCurrentDirectory())
+              .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+              .Build();
+
     string connectionString = configuration.GetConnectionString("MyConnectionString") ?? throw new InvalidOperationException("Cannot find string connection!");
 
     services.AddGrpc();
@@ -38,14 +32,13 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
     services.AddSingleton(factory =>
     {
         return Fluently.Configure()
-            .Database(MsSqlConfiguration.MsSql2012.ConnectionString(connectionString))
-            .Mappings(m => m.FluentMappings
-                .AddFromAssemblyOf<StudentMap>()
-                .AddFromAssemblyOf<ClassMap>()
-                .AddFromAssemblyOf<TeacherMap>())
-            .BuildSessionFactory();
+             .Database(MsSqlConfiguration.MsSql2012.ConnectionString(connectionString))
+             .Mappings(m => m.FluentMappings
+                 .AddFromAssemblyOf<StudentMap>()
+                 .AddFromAssemblyOf<ClassMap>()
+                 .AddFromAssemblyOf<TeacherMap>())
+             .BuildSessionFactory();
     });
-
     services.AddScoped(provider => provider.GetRequiredService<ISessionFactory>().OpenSession());
     services.AddScoped<IStudentProto, StudentService>();
     services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));

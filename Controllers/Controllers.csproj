@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentNHibernate" Version="3.4.0" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.70.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.2" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />

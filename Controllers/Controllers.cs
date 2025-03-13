@@ -1,4 +1,5 @@
 ﻿using Services.Interfaces;
+using Shares.Constants;
 using Shares.Utils;
 using System;
 using System.Collections.Generic;
@@ -19,14 +20,7 @@ namespace Controllers
 
         public async Task ManageStudentAsync()
         {
-            List<string> menuFeature = new List<string> {
-                "1.Show student list:",
-                "2.AddAsync Student:",
-                "3.UpdateAsync student by Id:",
-                "4.DeleteAsync student by Id:",
-                "5.Sort student list by name:",
-                "6.Search by student id:",
-                "7.Exit." };
+            List<string> menuFeature = AppConstants.MENU_FEATURE;
 
             bool exitFlag = false;
 

@@ -1,17 +1,9 @@
-﻿using Controllers;
-using FluentNHibernate.Cfg;
-using FluentNHibernate.Cfg.Db;
-using FluentNHibernate.Mapping;
-using Microsoft.Extensions.Configuration;
+﻿using Grpc.Net.Client;
 using Microsoft.Extensions.DependencyInjection;
-using NHibernate;
-using RepositoriesUseNHibernate.Implements;
-using RepositoriesUseNHibernate.Interfaces;
-using RepositoriesUseNHibernate.Mappings;
-using Services.Implements;
-using Services.Interfaces;
-using Shares.Models;
-using System.IO.Pipelines;
+using ProtoBuf.Grpc.Client;
+using Shares.ServiceContracts;
+using Controllers;
+using Microsoft.Extensions.Configuration;
 
 namespace Controllers
 {
@@ -20,30 +12,19 @@ namespace Controllers
         static async Task Main()
         {
             var configuration = new ConfigurationBuilder()
-                 .SetBasePath(Directory.GetCurrentDirectory())
-                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                 .Build();
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
 
-            string connectionString = configuration.GetConnectionString("MyConnectionString") ?? throw new InvalidOperationException("Cannot find string connection!");
+            string grpcUrl = configuration.GetSection("GrpcServer")["Url"] ?? throw new InvalidOperationException("Cannot find gRPC URL!");
 
             var serviceProvider = new ServiceCollection()
-                .AddSingleton(factory =>
+                .AddSingleton(GrpcChannel.ForAddress(grpcUrl))
+                .AddSingleton(serviceProvider =>
                 {
-                    return Fluently.Configure()
-                         .Database(MsSqlConfiguration.MsSql2012.ConnectionString(connectionString))
-                         .Mappings(m => m.FluentMappings
-                             .AddFromAssemblyOf<StudentMap>()
-                             .AddFromAssemblyOf<ClassMap>()
-                             .AddFromAssemblyOf<TeacherMap>())
-                         .BuildSessionFactory();
+                    return serviceProvider.GetRequiredService<GrpcChannel>().CreateGrpcService<IStudentProto>();
                 })
-                .AddScoped(provider => provider.GetRequiredService<ISessionFactory>().OpenSession())
-                .AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>))
                 .AddSingleton<Controllers>()
-                .AddSingleton<IStudentService, StudentService>()
-                .AddSingleton<IClassService, ClassService>()
-                .AddSingleton<IStudentRepository, StudentRepository>()
-                .AddSingleton<IClassRepository, ClassRepository>()
                 .BuildServiceProvider();
 
             var studentController = serviceProvider.GetRequiredService<Controllers>();
@@ -51,5 +32,3 @@ namespace Controllers
         }
     }
 }
-
-

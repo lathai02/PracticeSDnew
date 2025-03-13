@@ -1,5 +1,5 @@
-﻿using Services.Interfaces;
-using Shares.Constants;
+﻿using Shares.Constants;
+using Shares.ServiceContracts;
 using Shares.Utils;
 using System;
 using System.Collections.Generic;
@@ -11,11 +11,11 @@ namespace Controllers
 {
     public class Controllers
     {
-        private readonly IStudentService _studentService;
+        private readonly IStudentProto _studentProto;
 
-        public Controllers(IStudentService studentService)
+        public Controllers(IStudentProto studentProto)
         {
-            _studentService = studentService;
+            _studentProto = studentProto;
         }
 
         public async Task ManageStudentAsync()
@@ -41,22 +41,22 @@ namespace Controllers
                     switch (chooseNum)
                     {
                         case 1:
-                            await _studentService.PrintStudentListAsync();
+                            await _studentProto.PrintStudentListAsync(new Empty());
                             break;
                         case 2:
-                            await _studentService.AddStudentAsync();
+                            await _studentProto.AddStudentAsync(new Empty());
                             break;
                         case 3:
-                            await _studentService.UpdateStudentAsync();
+                            await _studentProto.UpdateStudentAsync(new Empty());
                             break;
                         case 4:
-                            await _studentService.DeleteStudentAsync();
+                            await _studentProto.DeleteStudentAsync(new Empty());
                             break;
                         case 5:
-                            await _studentService.SortStudentListByNameAsync();
+                            await _studentProto.SortStudentListByNameAsync(new Empty());
                             break;
                         case 6:
-                            await _studentService.SearchByStudentIdAsync();
+                            await _studentProto.SearchByStudentIdAsync(new Empty());
                             break;
                         case 7:
                             exitFlag = true;

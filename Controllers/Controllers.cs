@@ -45,6 +45,7 @@ namespace Controllers
                             break;
                         case 2:
                             await _studentProto.AddStudentAsync(new Empty());
+                            Console.WriteLine("Student added successfully.");
                             break;
                         case 3:
                             await _studentProto.UpdateStudentAsync(new Empty());

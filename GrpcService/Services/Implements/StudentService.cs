@@ -30,7 +30,6 @@ namespace GrpcService.Services.Implements
 
             var student = await GetStudentInfo(studentId);
             await _studentRepository.AddAsync(student);
-            Console.WriteLine("Student added successfully.");
 
             return new Empty();
         }
@@ -96,6 +95,7 @@ namespace GrpcService.Services.Implements
             return new Empty();
         }
 
+        #region Private methods
         private async Task<Student> GetStudentInfo(string studentId = "")
         {
             var studentName = StringUtils.InputString("Enter student name:");
@@ -128,5 +128,6 @@ namespace GrpcService.Services.Implements
 
             return student;
         }
+        #endregion
     }
 }

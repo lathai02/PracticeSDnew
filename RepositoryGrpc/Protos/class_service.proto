@@ -1,0 +1,25 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "RepositoryGrpc.Protos";
+
+import "generic_service.proto";
+
+// 🚀 ClassService kế thừa từ GenericService
+service ClassService {
+  rpc GetAllClassWithTeacher (Empty) returns (ClassListResponse);
+}
+
+// 📌 Empty Message
+message Empty {}
+
+// 🏫 Class Messages
+message Class {
+  int32 id = 1;
+  string name = 2;
+  string teacher = 3;
+}
+
+// 📋 List Responses
+message ClassListResponse {
+  repeated Class classes = 1;
+}

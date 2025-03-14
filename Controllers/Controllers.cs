@@ -99,7 +99,8 @@ namespace Controllers
                             var studentDobUpdate = DateTimeUtils.InputDateTime($"Enter student dob ({AppConstants.DATE_FORMAT}): ");
 
                             var classResponseUpdate = await _classProto.GetAllClassWithTeacherAsync(new Empty());
-                            StringUtils.PrintList(classResponseUpdate.Classes, "Class List");
+                            
+                            StringUtils.PrintList(_mapper.Map<List<Class>>(classResponseUpdate.Classes), "Class List");
 
                             ClassRequest UpdateClassRequest = new ClassRequest
                             {

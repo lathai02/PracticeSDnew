@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Grpc.Core;
 using Microsoft.IdentityModel.Tokens;
 using RepositoriesUseNHibernate.Interfaces;
 using Shares.Constants;
@@ -24,14 +25,21 @@ namespace GrpcService.Services.Implements
             _mapper = mapper;
         }
 
-        public async Task<Empty> AddStudentAsync(RequestStudentAdd request, CallContext? context = null)
+        public async Task<Empty> AddStudentAsync(RequestStudentAdd request)
         {
-            await _studentRepository.AddAsync(_mapper.Map<Student>(request));
+            try
+            {
+                await _studentRepository.AddAsync(_mapper.Map<Student>(request));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
 
             return new Empty();
         }
 
-        public async Task<Empty> UpdateStudentAsync(RequestStudentAdd request, CallContext? context = null)
+        public async Task<Empty> UpdateStudentAsync(RequestStudentAdd request)
         {
 
             await _studentRepository.UpdateAsync(_mapper.Map<Student>(request));
@@ -40,7 +48,7 @@ namespace GrpcService.Services.Implements
             return new Empty();
         }
 
-        public async Task<Empty> DeleteStudentAsync(RequestStudent request, CallContext? context = null)
+        public async Task<Empty> DeleteStudentAsync(RequestStudent request)
         {
             var student = await _studentRepository.GetByIdAsync(request.StudentId);
             if (student == null)
@@ -52,19 +60,27 @@ namespace GrpcService.Services.Implements
             return new Empty();
         }
 
-        public async Task<StudentResponse?> SearchByStudentIdAsync(RequestStudent request, CallContext? context = null)
+        public async Task<StudentResponse?> SearchByStudentIdAsync(RequestStudent request)
         {
             var student = await _studentRepository.GetByIdAsync(request.StudentId);
             return _mapper.Map<StudentResponse>(student);
         }
 
-        public async Task<StudentListResponse> PrintStudentListAsync(Empty request, CallContext? context = null)
+        public async Task<StudentListResponse> PrintStudentListAsync(Empty request)
         {
-            var students = await _studentRepository.GetStudentListWithClassAsync();
-            return _mapper.Map<StudentListResponse>(students);
+            try
+            {
+                var students = await _studentRepository.GetStudentListWithClassAsync();
+                return _mapper.Map<StudentListResponse>(students);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return new StudentListResponse();
         }
 
-        public async Task<StudentListResponse> SortStudentListByNameAsync(Empty request, CallContext? context = null)
+        public async Task<StudentListResponse> SortStudentListByNameAsync(Empty request)
         {
             var students = await _studentRepository.GetStudentListSortByNameAsync();
             return _mapper.Map<StudentListResponse>(students);

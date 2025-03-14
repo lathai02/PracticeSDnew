@@ -10,12 +10,9 @@ using RepositoriesUseNHibernate.Mappings;
 using Shares.MappingProfiles;
 
 var builder = WebApplication.CreateBuilder(args);
-var configuration = new ConfigurationBuilder()
-    .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-    .Build();
 
-string connectionString = configuration.GetConnectionString("MyConnectionString")
+// Lấy connection string từ builder.Configuration
+string connectionString = builder.Configuration.GetConnectionString("MyConnectionString")
     ?? throw new InvalidOperationException("Cannot find string connection!");
 
 // NHibernate Configuration

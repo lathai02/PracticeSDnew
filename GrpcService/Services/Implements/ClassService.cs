@@ -24,13 +24,13 @@ namespace GrpcService.Services.Implements
             _mapper = mapper;
         }
 
-        public async Task<ClassListResponse> GetAllClassWithTeacherAsync(Empty request, CallContext? context = null)
+        public async Task<ClassListResponse> GetAllClassWithTeacherAsync(Empty request)
         {
             var classes = await _classRepository.GetAllClassWithTeacherAsync();
             return _mapper.Map<ClassListResponse>(classes);
         }
 
-        public async Task<ClassResponse?> GetClassByIdAsync(ClassRequest request, CallContext? context = null)
+        public async Task<ClassResponse?> GetClassByIdAsync(ClassRequest request)
         {
             var resClass = await _classRepository.GetByIdAsync(request.ClassId);
             return _mapper.Map<ClassResponse>(resClass);

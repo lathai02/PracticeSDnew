@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Grpc.Core;
+using Microsoft.IdentityModel.Tokens;
 using ProtoBuf.Grpc.Configuration;
 using Shares.Models;
 using System;
@@ -25,7 +26,7 @@ namespace Shares.ServiceContracts
     public class RequestStudentAdd
     {
         [DataMember(Order = 1)]
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         [DataMember(Order = 2)]
         public string Name { get; set; } = string.Empty;
@@ -37,7 +38,7 @@ namespace Shares.ServiceContracts
         public DateTime DateOfBirth { get; set; }
 
         [DataMember(Order = 5)]
-        public Class Class { get; set; } = new Class();
+        public ClassResponse ClassResponse { get; set; } = new ClassResponse();
     }
 
     [DataContract]
@@ -70,21 +71,21 @@ namespace Shares.ServiceContracts
     public interface IStudentProto
     {
         [OperationContract]
-        Task<StudentListResponse> PrintStudentListAsync(Empty request, CallContext? context = default);
+        Task<StudentListResponse> PrintStudentListAsync(Empty request);
 
         [OperationContract]
-        Task<Empty> AddStudentAsync(RequestStudentAdd request, CallContext? context = default);
+        Task<Empty> AddStudentAsync(RequestStudentAdd request);
 
         [OperationContract]
-        Task<Empty> UpdateStudentAsync(RequestStudentAdd request, CallContext? context = default);
+        Task<Empty> UpdateStudentAsync(RequestStudentAdd request);
 
         [OperationContract]
-        Task<Empty> DeleteStudentAsync(RequestStudent request, CallContext? context = default);
+        Task<Empty> DeleteStudentAsync(RequestStudent request);
 
         [OperationContract]
-        Task<StudentListResponse> SortStudentListByNameAsync(Empty request, CallContext? context = default);
+        Task<StudentListResponse> SortStudentListByNameAsync(Empty request);
 
         [OperationContract]
-        Task<StudentResponse?> SearchByStudentIdAsync(RequestStudent request, CallContext? context = default);
+        Task<StudentResponse?> SearchByStudentIdAsync(RequestStudent request);
     }
 }

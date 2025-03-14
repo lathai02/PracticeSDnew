@@ -15,9 +15,11 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="14.0.0" />
+    <PackageReference Include="FluentNHibernate" Version="3.4.0" />
     <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.70.0" />
     <PackageReference Include="protobuf-net.Grpc" Version="1.2.2" />
     <PackageReference Include="protobuf-net.Grpc.AspNetCore" Version="1.2.2" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
   </ItemGroup>
 
   <ItemGroup>

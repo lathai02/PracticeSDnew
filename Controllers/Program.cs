@@ -34,9 +34,7 @@ namespace Controllers
 
                 // Controller
                 .AddSingleton<Controllers>()
-
                 .BuildServiceProvider();
-
 
             var studentController = serviceProvider.GetRequiredService<Controllers>();
             await studentController.ManageStudentAsync();

@@ -41,10 +41,10 @@ namespace Shares.ServiceContracts
     public interface IClassProto
     {
         [OperationContract]
-        Task<ClassListResponse> GetAllClassWithTeacherAsync(Empty request, CallContext? context = default);
+        Task<ClassListResponse> GetAllClassWithTeacherAsync(Empty request);
 
         [OperationContract]
-        Task<ClassResponse?> GetClassByIdAsync(ClassRequest request, CallContext? context = default);
+        Task<ClassResponse?> GetClassByIdAsync(ClassRequest request);
     }
 }
 

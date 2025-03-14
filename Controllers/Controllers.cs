@@ -49,7 +49,7 @@ namespace Controllers
                     {
                         case 1:
                             var students = await _studentProto.PrintStudentListAsync(new Empty());
-                            StringUtils.PrintList(students.Students, "Student List");
+                            StringUtils.PrintList(_mapper.Map<List<Student>>(students.Students), "Student List");
                             break;
                         case 2:
                             var studentAddId = StringUtils.InputString("Enter student id:", AppConstants.STUDENT_ID_PARTERN);
@@ -58,7 +58,7 @@ namespace Controllers
                             var studentDob = DateTimeUtils.InputDateTime($"Enter student dob ({AppConstants.DATE_FORMAT}): ");
 
                             var classResponse = await _classProto.GetAllClassWithTeacherAsync(new Empty());
-                            StringUtils.PrintList(classResponse.Classes, "Class List");
+                            StringUtils.PrintList(_mapper.Map<List<Class>>(classResponse.Classes), "Class List");
 
                             ClassRequest AddClassRequest = new ClassRequest
                             {
@@ -132,7 +132,7 @@ namespace Controllers
                             break;
                         case 5:
                             var studentSortByNameList = await _studentProto.SortStudentListByNameAsync(new Empty());
-                            StringUtils.PrintList(studentSortByNameList.Students, "Student List");
+                            StringUtils.PrintList(_mapper.Map<List<Student>>(studentSortByNameList.Students), "Student List");
                             break;
                         case 6:
                             RequestStudent SearchStudentRequest = new RequestStudent
@@ -146,7 +146,7 @@ namespace Controllers
                                 Console.WriteLine("Student not found!");
                                 return;
                             }
-                            Console.WriteLine(studentSearchResponse.ToString());
+                            Console.WriteLine(_mapper.Map<Student>(studentSearchResponse).ToString());
                             break;
                         case 7:
                             exitFlag = true;

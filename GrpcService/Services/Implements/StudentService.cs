@@ -1,4 +1,4 @@
-﻿using GrpcService.Services.Interfaces;
+﻿using AutoMapper;
 using Microsoft.IdentityModel.Tokens;
 using RepositoriesUseNHibernate.Interfaces;
 using Shares.Constants;
@@ -16,118 +16,58 @@ namespace GrpcService.Services.Implements
     public class StudentService : IStudentProto
     {
         private readonly IStudentRepository _studentRepository;
-        private readonly IClassService _classService;
+        private readonly IMapper _mapper;
 
-        public StudentService(IStudentRepository studentRepository, IClassService classService)
+        public StudentService(IStudentRepository studentRepository, IMapper mapper)
         {
             _studentRepository = studentRepository;
-            _classService = classService;
+            _mapper = mapper;
         }
 
-        public async Task<Empty> AddStudentAsync(Empty request, CallContext? context = null)
+        public async Task<Empty> AddStudentAsync(RequestStudentAdd request, CallContext? context = null)
         {
-            var studentId = StringUtils.InputString("Enter student id:", AppConstants.STUDENT_ID_PARTERN);
-
-            var student = await GetStudentInfo(studentId);
-            await _studentRepository.AddAsync(student);
+            await _studentRepository.AddAsync(_mapper.Map<Student>(request));
 
             return new Empty();
         }
 
-        public async Task<Empty> UpdateStudentAsync(Empty request, CallContext? context = null)
+        public async Task<Empty> UpdateStudentAsync(RequestStudentAdd request, CallContext? context = null)
         {
-            var studentId = StringUtils.InputString("Enter student id to update:", AppConstants.STUDENT_ID_PARTERN);
-            var student = await _studentRepository.GetByIdAsync(studentId);
 
-            if (student == null)
-            {
-                Console.WriteLine("Student not found!");
-                return new Empty();
-            }
-
-            var studentUpdated = await GetStudentInfo(studentId);
-            await _studentRepository.UpdateAsync(studentUpdated);
+            await _studentRepository.UpdateAsync(_mapper.Map<Student>(request));
             Console.WriteLine("Student updated successfully.");
 
             return new Empty();
         }
 
-        public async Task<Empty> DeleteStudentAsync(Empty request, CallContext? context = null)
+        public async Task<Empty> DeleteStudentAsync(RequestStudent request, CallContext? context = null)
         {
-            var student = await FindStudentById();
+            var student = await _studentRepository.GetByIdAsync(request.StudentId);
             if (student == null)
             {
-                return new Empty();
+                throw new Exception("Student not found!");
             }
-
             await _studentRepository.DeleteAsync(student);
-            Console.WriteLine("Student deleted successfully.");
 
             return new Empty();
-
         }
 
-        public async Task<Empty> SearchByStudentIdAsync(Empty request, CallContext? context = null)
+        public async Task<StudentResponse?> SearchByStudentIdAsync(RequestStudent request, CallContext? context = null)
         {
-            var student = await FindStudentById();
-            if (student == null)
-            {
-                return new Empty();
-            }
-
-            Console.WriteLine(student.ToString());
-
-            return new Empty();
+            var student = await _studentRepository.GetByIdAsync(request.StudentId);
+            return _mapper.Map<StudentResponse>(student);
         }
 
-        public async Task<Empty> PrintStudentListAsync(Empty request, CallContext? context = null)
+        public async Task<StudentListResponse> PrintStudentListAsync(Empty request, CallContext? context = null)
         {
             var students = await _studentRepository.GetStudentListWithClassAsync();
-            StringUtils.PrintList(students, "Student List");
-
-            return new Empty();
+            return _mapper.Map<StudentListResponse>(students);
         }
 
-        public async Task<Empty> SortStudentListByNameAsync(Empty request, CallContext? context = null)
+        public async Task<StudentListResponse> SortStudentListByNameAsync(Empty request, CallContext? context = null)
         {
-            StringUtils.PrintList(await _studentRepository.GetStudentListSortByNameAsync(), "Student List");
-
-            return new Empty();
+            var students = await _studentRepository.GetStudentListSortByNameAsync();
+            return _mapper.Map<StudentListResponse>(students);
         }
-
-        #region Private methods
-        private async Task<Student> GetStudentInfo(string studentId = "")
-        {
-            var studentName = StringUtils.InputString("Enter student name:");
-            var studentAddress = StringUtils.InputString("Enter student address:");
-            var studentDob = DateTimeUtils.InputDateTime($"Enter student dob ({AppConstants.DATE_FORMAT}): ");
-
-            var classes = await _classService.GetAllClassWithTeacherAsync();
-            StringUtils.PrintList(classes, "Class List");
-            var classId = NumberUtils.InputIntegerNumber("Enter class id: ", 1, classes.Count);
-
-            return new Student
-            {
-                Id = studentId,
-                Name = studentName,
-                Address = studentAddress,
-                DateOfBirth = studentDob,
-                Class = await _classService.GetClassByIdAsync(classId)
-            };
-        }
-
-        private async Task<Student?> FindStudentById()
-        {
-            var studentId = StringUtils.InputString("Enter student id:", AppConstants.STUDENT_ID_PARTERN);
-            var student = await _studentRepository.GetByIdAsync(studentId);
-
-            if (student == null)
-            {
-                Console.WriteLine("Student not found!");
-            }
-
-            return student;
-        }
-        #endregion
     }
 }

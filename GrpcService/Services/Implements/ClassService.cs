@@ -1,6 +1,10 @@
-﻿using GrpcService.Services.Interfaces;
+﻿using AutoMapper;
+using Azure.Core;
+using ProtoBuf.Grpc;
+using RepositoriesUseNHibernate.Implements;
 using RepositoriesUseNHibernate.Interfaces;
 using Shares.Models;
+using Shares.ServiceContracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,23 +13,27 @@ using System.Threading.Tasks;
 
 namespace GrpcService.Services.Implements
 {
-    public class ClassService : IClassService
+    public class ClassService : IClassProto
     {
         private readonly IClassRepository _classRepository;
+        private readonly IMapper _mapper;
 
-        public ClassService(IClassRepository classRepository)
+        public ClassService(IClassRepository classRepository, IMapper mapper)
         {
             _classRepository = classRepository;
+            _mapper = mapper;
         }
 
-        public async Task<List<Class>> GetAllClassWithTeacherAsync()
+        public async Task<ClassListResponse> GetAllClassWithTeacherAsync(Empty request, CallContext? context = null)
         {
-            return await _classRepository.GetAllClassWithTeacherAsync();
+            var classes = await _classRepository.GetAllClassWithTeacherAsync();
+            return _mapper.Map<ClassListResponse>(classes);
         }
 
-        public async Task<Class?> GetClassByIdAsync(int id)
+        public async Task<ClassResponse?> GetClassByIdAsync(ClassRequest request, CallContext? context = null)
         {
-            return await _classRepository.GetByIdAsync(id);
+            var resClass = await _classRepository.GetByIdAsync(request.ClassId);
+            return _mapper.Map<ClassResponse>(resClass);
         }
     }
 }

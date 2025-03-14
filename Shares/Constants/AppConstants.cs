@@ -12,7 +12,7 @@ namespace Shares.Constants
 
         public const string STUDENT_ID_PARTERN = "^[A-Za-z]{2}\\d{6}$";
 
-        public static readonly List<string> MENU_FEATURE = new List<string>
+        public static readonly IReadOnlyList<string> MENU_FEATURE = new List<string>
         {
             "1.Show student list:",
             "2.AddAsync Student:",

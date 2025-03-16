@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure;
 using Grpc.Core;
 using Microsoft.IdentityModel.Tokens;
 using RepositoriesUseNHibernate.Interfaces;
@@ -14,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace GrpcService.Services.Implements
 {
-    public class StudentService : IStudentProto
+    public class StudentService : BaseService, IStudentProto
     {
         private readonly IStudentRepository _studentRepository;
         private readonly IMapper _mapper;
@@ -25,65 +26,102 @@ namespace GrpcService.Services.Implements
             _mapper = mapper;
         }
 
-        public async Task<Empty> AddStudentAsync(RequestStudentAdd request)
+        public async Task<ResponseObj<EmptyResponse>> AddStudentAsync(RequestStudentAdd request)
         {
             try
             {
-                await _studentRepository.AddAsync(_mapper.Map<Student>(request));
+                var student = _mapper.Map<Student>(request);
+                await _studentRepository.AddAsync(student);
+                return CreateResponse<EmptyResponse>(null, "Student added successfully.");
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Console.WriteLine(e.Message);
+                return CreateResponse<EmptyResponse>(null, "Error when adding student!");
             }
-
-            return new Empty();
         }
 
-        public async Task<Empty> UpdateStudentAsync(RequestStudentAdd request)
+        public async Task<ResponseObj<EmptyResponse>> UpdateStudentAsync(RequestStudentAdd request)
         {
-
-            await _studentRepository.UpdateAsync(_mapper.Map<Student>(request));
-            Console.WriteLine("Student updated successfully.");
-
-            return new Empty();
-        }
-
-        public async Task<Empty> DeleteStudentAsync(RequestStudent request)
-        {
-            var student = await _studentRepository.GetByIdAsync(request.StudentId);
-            if (student == null)
+            try
             {
-                throw new Exception("Student not found!");
+                var student = _mapper.Map<Student>(request);
+                await _studentRepository.UpdateAsync(student);
+                return CreateResponse<EmptyResponse>(null, "Student updated successfully.");
             }
-            await _studentRepository.DeleteAsync(student);
-
-            return new Empty();
+            catch (Exception)
+            {
+                return CreateResponse<EmptyResponse>(null, "Error when updating student!");
+            }
         }
 
-        public async Task<StudentResponse?> SearchByStudentIdAsync(RequestStudent request)
+        public async Task<ResponseObj<EmptyResponse>> DeleteStudentAsync(RequestStudent request)
         {
-            var student = await _studentRepository.GetByIdAsync(request.StudentId);
-            return _mapper.Map<StudentResponse>(student);
+            try
+            {
+                var student = await _studentRepository.GetByIdAsync(request.StudentId);
+                if (student == null)
+                {
+                    return CreateResponse<EmptyResponse>(null, "Student not found!");
+                }
+
+                await _studentRepository.DeleteAsync(student);
+                return CreateResponse<EmptyResponse>(null, "Student deleted successfully.");
+            }
+            catch (Exception)
+            {
+                return CreateResponse<EmptyResponse>(null, "Error when deleting student!");
+            }
         }
 
-        public async Task<StudentListResponse> PrintStudentListAsync(Empty request)
+        public async Task<ResponseObj<StudentResponse>> SearchByStudentIdAsync(RequestStudent request)
+        {
+            try
+            {
+                var student = await _studentRepository.GetByIdAsync(request.StudentId);
+                if (student == null)
+                {
+                    return CreateResponse<StudentResponse>(null, "Student not found!");
+                }
+
+                var studentResponse = _mapper.Map<StudentResponse>(student);
+                return CreateResponse(studentResponse, "Student found!");
+            }
+            catch (Exception)
+            {
+                return CreateResponse<StudentResponse>(null, "Error when searching student by ID!");
+            }
+        }
+
+        public async Task<ResponseObj<StudentListResponse>> GetListStudentAsync(Empty request)
         {
             try
             {
                 var students = await _studentRepository.GetStudentListWithClassAsync();
-                return _mapper.Map<StudentListResponse>(students);
+                var studentListResponse = _mapper.Map<StudentListResponse>(students);
+
+                var message = students.Count > 0 ? "Print student list successfully." : "No student found!";
+                return CreateResponse(studentListResponse, message);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Console.WriteLine(e.Message);
+                return CreateResponse<StudentListResponse>(null, "Error when getting student list!");
             }
-            return new StudentListResponse();
         }
 
-        public async Task<StudentListResponse> SortStudentListByNameAsync(Empty request)
+        public async Task<ResponseObj<StudentListResponse>> SortStudentListByNameAsync(Empty request)
         {
-            var students = await _studentRepository.GetStudentListSortByNameAsync();
-            return _mapper.Map<StudentListResponse>(students);
+            try
+            {
+                var students = await _studentRepository.GetStudentListSortByNameAsync();
+                var studentListResponse = _mapper.Map<StudentListResponse>(students);
+
+                var message = students.Count > 0 ? "Sort student list by name successfully." : "No student found!";
+                return CreateResponse(studentListResponse, message);
+            }
+            catch (Exception)
+            {
+                return CreateResponse<StudentListResponse>(null, "Error when sorting student list by name!");
+            }
         }
     }
 }

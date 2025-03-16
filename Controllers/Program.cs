@@ -33,7 +33,9 @@ namespace Controllers
                 .AddAutoMapper(typeof(ClassMappingProfile), typeof(StudentMappingProfile))
 
                 // Controller
+                .AddSingleton<StudentManager>()
                 .AddSingleton<Controllers>()
+
                 .BuildServiceProvider();
 
             var studentController = serviceProvider.GetRequiredService<Controllers>();

@@ -13,9 +13,6 @@ using System.Threading.Tasks;
 namespace Shares.ServiceContracts
 {
     [DataContract]
-    public class Empty { }
-
-    [DataContract]
     public class RequestStudent
     {
         [DataMember(Order = 1)]
@@ -71,21 +68,21 @@ namespace Shares.ServiceContracts
     public interface IStudentProto
     {
         [OperationContract]
-        Task<StudentListResponse> PrintStudentListAsync(Empty request);
+        Task<ResponseObj<StudentListResponse>> GetListStudentAsync(Empty request);
 
         [OperationContract]
-        Task<Empty> AddStudentAsync(RequestStudentAdd request);
+        Task<ResponseObj<EmptyResponse>> AddStudentAsync(RequestStudentAdd request);
 
         [OperationContract]
-        Task<Empty> UpdateStudentAsync(RequestStudentAdd request);
+        Task<ResponseObj<EmptyResponse>> UpdateStudentAsync(RequestStudentAdd request);
 
         [OperationContract]
-        Task<Empty> DeleteStudentAsync(RequestStudent request);
+        Task<ResponseObj<EmptyResponse>> DeleteStudentAsync(RequestStudent request);
 
         [OperationContract]
-        Task<StudentListResponse> SortStudentListByNameAsync(Empty request);
+        Task<ResponseObj<StudentListResponse>> SortStudentListByNameAsync(Empty request);
 
         [OperationContract]
-        Task<StudentResponse?> SearchByStudentIdAsync(RequestStudent request);
+        Task<ResponseObj<StudentResponse>> SearchByStudentIdAsync(RequestStudent request);
     }
 }

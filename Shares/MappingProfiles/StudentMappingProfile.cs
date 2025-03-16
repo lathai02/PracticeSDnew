@@ -22,7 +22,6 @@ namespace Shares.MappingProfiles
                 .ForMember(dest => dest.StudentAddress, opt => opt.MapFrom(src => src.Address))
                 .ForMember(dest => dest.ClassName, opt => opt.MapFrom(src => src.Class != null ? src.Class.Name : "No Class"));
 
-            // Map từ List<Student> sang StudentListResponse
             CreateMap<List<Student>, StudentListResponse>()
                 .ForMember(dest => dest.Students, opt => opt.MapFrom(src => src));
 
@@ -54,7 +53,6 @@ namespace Shares.MappingProfiles
                }));
 
             CreateMap<ClassResponse, Class>();
-
         }
     }
 }

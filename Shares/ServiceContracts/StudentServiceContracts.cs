@@ -55,6 +55,9 @@ namespace Shares.ServiceContracts
 
         [DataMember(Order = 5)]
         public string ClassName { get; set; } = null!;
+
+        [DataMember(Order = 6)]
+        public ClassResponse ClassResponse { get; set; } = new ClassResponse();
     }
 
     [DataContract]

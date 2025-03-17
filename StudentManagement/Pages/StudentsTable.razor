@@ -30,18 +30,105 @@
         .form-item DatePicker {
             width: 100%;
         }
+
+    .student-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 30px;
+        background: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease;
+    }
+
+        .student-form:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+    .form-item {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+        .form-item Text {
+            font-weight: 500;
+            font-size: 16px;
+            color: #555;
+        }
+
+        .form-item Input,
+        .form-item Select,
+        .form-item DatePicker {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            font-size: 14px;
+            background-color: #f7f7f7;
+            transition: border-color 0.3s ease;
+        }
+
+            .form-item Input:focus,
+            .form-item Select:focus,
+            .form-item DatePicker:focus {
+                border-color: #1890ff;
+                background-color: #ffffff;
+                outline: none;
+            }
+
+            .form-item Input::placeholder,
+            .form-item Select::placeholder,
+            .form-item DatePicker::placeholder {
+                color: #bbb;
+            }
+
+        .form-item .ant-alert {
+            margin-top: 4px;
+        }
+
+    button {
+        padding: 10px 20px;
+        background-color: #1890ff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+        button:hover {
+            background-color: #40a9ff;
+        }
+
+        button:disabled {
+            background-color: #f0f0f0;
+            color: #bfbfbf;
+            cursor: not-allowed;
+        }
+
+    .alert-container {
+        margin-top: 10px;
+    }
+
+        .alert-container .ant-alert-info {
+            margin-bottom: 10px;
+        }
 </style>
 
 <h3>StudentManager</h3>
+@if (messageDelete != null)
+{
+    <Alert Message="@messageDelete" Type="AlertType.Success" ShowIcon="true" />
+}
 <br />
 <div>
     <Button Type="ButtonType.Primary" @onclick="() => SortStudentByName()">Sort by name</Button>
-    <Search Placeholder="input search text" OnChange="(e)=>Handle(e)" EnterButton="true" @bind-Value="@txtValue" />
-</div>
-
-<br />
-
-<div>
     <Button Icon="@IconType.Outline.Plus" Type="ButtonType.Primary" @onclick="() => Open()">Create a new student</Button>
     <Drawer Closable="true" Width="720" Visible="@visible" OnClose="Close">
         <Template style="height:90%">
@@ -121,11 +208,11 @@
         </Template>
     </Drawer>
 </div>
+<br />
 
-@if (messageDelete != null)
-{
-    <Alert Message="@messageDelete" Type="AlertType.Success" ShowIcon="true" />
-}
+<div>
+    <Search Placeholder="input search text" OnChange="(e)=>Handle(e)" EnterButton="true" @bind-Value="@txtValue" />
+</div>
 <br />
 
 <Table DataSource="@students" Bordered="true" Size="TableSize.Middle">
@@ -145,3 +232,8 @@
         </Space>
     </ActionColumn>
 </Table>
+<AntDesign.Pagination PageIndex="@currentPage"
+                      Total="@totalStudents"
+                      PageSize="@pageSize"
+                      OnChange="(p)=>HandlePageChange(p)">
+</AntDesign.Pagination>

@@ -33,14 +33,20 @@ namespace StudentManagement.Pages
         private bool isEditMode = false;
         private string txtValue { get; set; }
 
-
+        private int currentPage = 1;
+        private int pageSize = 10;
+        private int totalStudents = 0;
         protected override async Task OnInitializedAsync()
         {
             await LoadStudents();
             classList = await _studentManager.GetAllClass();
             selectedClass = classList[0];
         }
-
+        private void HandlePageChange(AntDesign.PaginationEventArgs args)
+        {
+            currentPage = args.Page;
+            Console.WriteLine($"Trang hiện tại: {currentPage}");
+        }
 
         private async Task Handle(string value)
         {
@@ -140,6 +146,14 @@ namespace StudentManagement.Pages
         private async Task LoadStudents()
         {
             students = await _studentManager.GetStudentList();
+            totalStudents = students.Count;
+
+        }
+
+        private void OnPageChange(int page)
+        {
+            currentPage = page;
+            //LoadPage(page);
         }
 
         protected async Task DeleteStudent(string id)

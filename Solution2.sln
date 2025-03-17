@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RepositoriesUseNHibernate",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrpcService", "GrpcService\GrpcService.csproj", "{24E1FDAD-AE66-4B56-ADE7-8EAEABC20BFC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentManagement", "StudentManagement\StudentManagement.csproj", "{145F9F3F-B0A7-43BA-B213-73ED97F5418B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{24E1FDAD-AE66-4B56-ADE7-8EAEABC20BFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24E1FDAD-AE66-4B56-ADE7-8EAEABC20BFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24E1FDAD-AE66-4B56-ADE7-8EAEABC20BFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{145F9F3F-B0A7-43BA-B213-73ED97F5418B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{145F9F3F-B0A7-43BA-B213-73ED97F5418B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{145F9F3F-B0A7-43BA-B213-73ED97F5418B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{145F9F3F-B0A7-43BA-B213-73ED97F5418B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

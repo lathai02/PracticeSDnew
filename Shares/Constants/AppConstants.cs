@@ -15,9 +15,9 @@ namespace Shares.Constants
         public static readonly IReadOnlyList<string> MENU_FEATURE = new List<string>
         {
             "1.Show student list:",
-            "2.AddAsync Student:",
-            "3.UpdateAsync student by Id:",
-            "4.DeleteAsync student by Id:",
+            "2.Add Student:",
+            "3.Update student by Id:",
+            "4.Delete student by Id:",
             "5.Sort student list by name:",
             "6.Search by student id:",
             "7.Exit."

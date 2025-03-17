@@ -1,8 +1,11 @@
 ﻿using AntDesign;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Shares.Constants;
 using Shares.Models;
 using StudentManagement.Services;
+using System.ServiceModel.Channels;
+using System.Threading.Tasks;
 
 namespace StudentManagement.Pages
 {
@@ -28,6 +31,8 @@ namespace StudentManagement.Pages
         private int selectedClassId;
         private bool visible;
         private bool isEditMode = false;
+        private string txtValue { get; set; }
+
 
         protected override async Task OnInitializedAsync()
         {
@@ -36,13 +41,35 @@ namespace StudentManagement.Pages
             selectedClass = classList[0];
         }
 
+
+        private async Task Handle(string value)
+        {
+            txtValue = value;
+            var student = await _studentManager.GetStudentByIdAsync(value);
+            var listStudentSearch = new List<Student>();
+            if (student != null)
+            {
+                listStudentSearch.Add(student);
+            }
+            students = listStudentSearch;
+            StateHasChanged();
+        }
+
         private void Close() => visible = false;
+
         private void Open()
         {
             ResetForm();
             isEditMode = false;
             visible = true;
         }
+
+        private async Task SortStudentByName()
+        {
+            students = await _studentManager.GetStudentList(true);
+            StateHasChanged();
+        }
+
         private void Open(Student student)
         {
             studentId = student.Id;
@@ -114,6 +141,7 @@ namespace StudentManagement.Pages
         {
             students = await _studentManager.GetStudentList();
         }
+
         protected async Task DeleteStudent(string id)
         {
             var res = await _studentManager.DeleteStudent(id);

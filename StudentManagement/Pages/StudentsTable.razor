@@ -35,7 +35,14 @@
 <h3>StudentManager</h3>
 <br />
 <div>
-    <Button Icon="@IconType.Outline.Plus" Type="ButtonType.Primary" @onclick="() => Open()">New account</Button>
+    <Button Type="ButtonType.Primary" @onclick="() => SortStudentByName()">Sort by name</Button>
+    <Search Placeholder="input search text" OnChange="(e)=>Handle(e)" EnterButton="true" @bind-Value="@txtValue" />
+</div>
+
+<br />
+
+<div>
+    <Button Icon="@IconType.Outline.Plus" Type="ButtonType.Primary" @onclick="() => Open()">Create a new student</Button>
     <Drawer Closable="true" Width="720" Visible="@visible" OnClose="Close">
         <Template style="height:90%">
             <h3>@(isEditMode ? "Edit Student" : "Add Student")</h3>
@@ -114,8 +121,6 @@
         </Template>
     </Drawer>
 </div>
-<br />
-
 
 @if (messageDelete != null)
 {

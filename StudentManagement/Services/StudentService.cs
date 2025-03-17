@@ -73,21 +73,10 @@ namespace StudentManagement.Services
             }
         }
 
-        private async Task<Student?> GetStudentByIdAsync(string studentId)
+        public async Task<Student> GetStudentByIdAsync(string studentId)
         {
             var response = await _studentProto.SearchByStudentIdAsync(new RequestStudent { StudentId = studentId });
             return response.Data == null ? null : _mapper.Map<Student>(response.Data);
-        }
-
-        private Student GetStudentInput(string studentId)
-        {
-            return new Student
-            {
-                Id = studentId,
-                Name = StringUtils.InputString("Enter student name:"),
-                Address = StringUtils.InputString("Enter student address:"),
-                DateOfBirth = DateTimeUtils.InputDateTime($"Enter student DOB ({AppConstants.DATE_FORMAT}): ")
-            };
         }
 
         public async Task<List<Class>> GetAllClass()
@@ -95,7 +84,5 @@ namespace StudentManagement.Services
             var response = await _classProto.GetAllClassWithTeacherAsync(new Empty());
             return _mapper.Map<List<Class>>(response.Data);
         }
-
-
     }
 }

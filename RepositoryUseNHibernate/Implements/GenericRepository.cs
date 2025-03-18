@@ -35,6 +35,7 @@ namespace RepositoriesUseNHibernate.Implements
                 await _session.SaveAsync(entity);
                 await transaction.CommitAsync();
             }
+
         }
 
         public async Task UpdateAsync(T entity)

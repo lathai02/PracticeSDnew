@@ -34,18 +34,21 @@ namespace StudentManagement.Pages
         private string txtValue { get; set; }
 
         private int currentPage = 1;
-        private int pageSize = 10;
+        private int pageSize = 5;
         private int totalStudents = 0;
+
         protected override async Task OnInitializedAsync()
         {
             await LoadStudents();
             classList = await _studentManager.GetAllClass();
             selectedClass = classList[0];
+            totalStudents = await _studentManager.GetTotalCountAsync();
         }
-        private void HandlePageChange(AntDesign.PaginationEventArgs args)
+
+        private async Task HandlePageChange(PaginationEventArgs args)
         {
             currentPage = args.Page;
-            Console.WriteLine($"Trang hiện tại: {currentPage}");
+            students = await _studentManager.GetStudentList(currentPage, pageSize);
         }
 
         private async Task Handle(string value)
@@ -58,6 +61,8 @@ namespace StudentManagement.Pages
                 listStudentSearch.Add(student);
             }
             students = listStudentSearch;
+
+            totalStudents = await _studentManager.GetTotalCountAsync();
             StateHasChanged();
         }
 
@@ -72,7 +77,7 @@ namespace StudentManagement.Pages
 
         private async Task SortStudentByName()
         {
-            students = await _studentManager.GetStudentList(true);
+            students = await _studentManager.GetStudentList(1, pageSize, true);
             StateHasChanged();
         }
 
@@ -137,23 +142,17 @@ namespace StudentManagement.Pages
             {
                 messageAdd = await _studentManager.AddOrUpdateStudent(s);
             }
+            totalStudents = await _studentManager.GetTotalCountAsync();
 
             await LoadStudents();
             StateHasChanged();
             Close();
+            currentPage = 1;
         }
 
         private async Task LoadStudents()
         {
-            students = await _studentManager.GetStudentList();
-            totalStudents = students.Count;
-
-        }
-
-        private void OnPageChange(int page)
-        {
-            currentPage = page;
-            //LoadPage(page);
+            students = await _studentManager.GetStudentList(1, pageSize);
         }
 
         protected async Task DeleteStudent(string id)
@@ -164,7 +163,9 @@ namespace StudentManagement.Pages
                 messageDelete = res;
                 StateHasChanged();
             }
-            students = await _studentManager.GetStudentList();
+            students = await _studentManager.GetStudentList(1, pageSize);
+            totalStudents = await _studentManager.GetTotalCountAsync();
+            currentPage = 1;
         }
 
         private bool IsFormInvalid()

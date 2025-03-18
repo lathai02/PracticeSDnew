@@ -9,7 +9,7 @@ namespace RepositoriesUseNHibernate.Interfaces
 {
     public interface IStudentRepository : IGenericRepository<Student, string>
     {
-        Task<List<Student>> GetStudentListWithClassAsync();
-        Task<List<Student>> GetStudentListSortByNameAsync();
+        Task<List<Student>> GetStudentListWithClassAsync(int pageNumber, int pageSize);
+        Task<List<Student>> GetStudentListSortByNameAsync(int pageNumber, int pageSize);
     }
 }

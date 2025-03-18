@@ -6,6 +6,11 @@
 @using Shares.Models
 
 <style>
+
+    .ant-table-pagination {
+        display: none;
+    }
+
     .student-form {
         display: flex;
         flex-direction: column;
@@ -232,6 +237,7 @@
         </Space>
     </ActionColumn>
 </Table>
+<br/>
 <AntDesign.Pagination PageIndex="@currentPage"
                       Total="@totalStudents"
                       PageSize="@pageSize"

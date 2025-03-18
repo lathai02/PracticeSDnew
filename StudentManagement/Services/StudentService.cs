@@ -19,15 +19,22 @@ namespace StudentManagement.Services
             _mapper = mapper;
         }
 
-        public async Task<List<Student>> GetStudentList(bool sorted = false)
+        public async Task<List<Student>> GetStudentList(int pageNumber, int pageSize, bool sorted = false)
         {
             var response = sorted
-                ? await _studentProto.SortStudentListByNameAsync(new Empty())
-                : await _studentProto.GetListStudentAsync(new Empty());
+                ? await _studentProto.SortStudentListByNameAsync(new PagingRequest { PageNumber = pageNumber, PageSize = pageSize })
+                : await _studentProto.GetListStudentAsync(new PagingRequest { PageNumber = pageNumber, PageSize = pageSize });
 
             var students = _mapper.Map<List<Student>>(response.Data);
 
             return students;
+        }
+
+        public async Task<int> GetTotalCountAsync()
+        {
+            var res = await _studentProto.GetTotalCountAsync(new Empty());
+
+            return res.Data.TotalItem;
         }
 
         public async Task<string> AddOrUpdateStudent(Student student, bool isUpdate = false)

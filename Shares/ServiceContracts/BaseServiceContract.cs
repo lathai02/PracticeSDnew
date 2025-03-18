@@ -11,6 +11,23 @@ namespace Shares.ServiceContracts
     public class Empty { }
 
     [DataContract]
+    public class ResponseNumber {
+        [DataMember(Order = 1)]
+        public int TotalItem { get; set; }
+    }
+
+    [DataContract]
+
+    public class PagingRequest
+    {
+        [DataMember(Order = 1)]
+        public int PageNumber { get; set; }
+
+        [DataMember(Order = 2)]
+        public int PageSize { get; set; }
+    }
+
+    [DataContract]
     public class ResponseObj<T>
     {
         [DataMember(Order = 1)]

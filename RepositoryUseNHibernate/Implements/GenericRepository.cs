@@ -54,5 +54,10 @@ namespace RepositoriesUseNHibernate.Implements
                 await transaction.CommitAsync();
             }
         }
+
+        public async Task<int> GetTotalCountAsync()
+        {
+            return await _session.Query<T>().CountAsync();
+        }
     }
 }

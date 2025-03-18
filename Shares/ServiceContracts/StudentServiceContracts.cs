@@ -71,7 +71,7 @@ namespace Shares.ServiceContracts
     public interface IStudentProto
     {
         [OperationContract]
-        Task<ResponseObj<StudentListResponse>> GetListStudentAsync(Empty request);
+        Task<ResponseObj<StudentListResponse>> GetListStudentAsync(PagingRequest request);
 
         [OperationContract]
         Task<ResponseObj<EmptyResponse>> AddStudentAsync(RequestStudentAdd request);
@@ -83,9 +83,12 @@ namespace Shares.ServiceContracts
         Task<ResponseObj<EmptyResponse>> DeleteStudentAsync(RequestStudent request);
 
         [OperationContract]
-        Task<ResponseObj<StudentListResponse>> SortStudentListByNameAsync(Empty request);
+        Task<ResponseObj<StudentListResponse>> SortStudentListByNameAsync(PagingRequest request);
 
         [OperationContract]
         Task<ResponseObj<StudentResponse>> SearchByStudentIdAsync(RequestStudent request);
+
+        [OperationContract]
+        Task<ResponseObj<ResponseNumber>> GetTotalCountAsync(Empty empty);
     }
 }

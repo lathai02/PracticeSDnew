@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Azure;
+using Azure.Core;
 using Grpc.Core;
 using Microsoft.IdentityModel.Tokens;
 using RepositoriesUseNHibernate.Interfaces;
@@ -92,11 +93,11 @@ namespace GrpcService.Services.Implements
             }
         }
 
-        public async Task<ResponseObj<StudentListResponse>> GetListStudentAsync(Empty request)
+        public async Task<ResponseObj<StudentListResponse>> GetListStudentAsync(PagingRequest request)
         {
             try
             {
-                var students = await _studentRepository.GetStudentListWithClassAsync();
+                var students = await _studentRepository.GetStudentListWithClassAsync(request.PageNumber, request.PageSize);
                 var studentListResponse = _mapper.Map<StudentListResponse>(students);
 
                 var message = students.Count > 0 ? "Print student list successfully." : "No student found!";
@@ -108,11 +109,11 @@ namespace GrpcService.Services.Implements
             }
         }
 
-        public async Task<ResponseObj<StudentListResponse>> SortStudentListByNameAsync(Empty request)
+        public async Task<ResponseObj<StudentListResponse>> SortStudentListByNameAsync(PagingRequest request)
         {
             try
             {
-                var students = await _studentRepository.GetStudentListSortByNameAsync();
+                var students = await _studentRepository.GetStudentListSortByNameAsync(request.PageNumber, request.PageSize);
                 var studentListResponse = _mapper.Map<StudentListResponse>(students);
 
                 var message = students.Count > 0 ? "Sort student list by name successfully." : "No student found!";
@@ -121,6 +122,18 @@ namespace GrpcService.Services.Implements
             catch (Exception)
             {
                 return CreateResponse<StudentListResponse>(null, "Error when sorting student list by name!");
+            }
+        }
+
+        public async Task<ResponseObj<ResponseNumber>> GetTotalCountAsync(Empty empty)
+        {
+            try
+            {
+                return CreateResponse(new ResponseNumber { TotalItem = await _studentRepository.GetTotalCountAsync() }, "Getting total count of student successfully.");
+            }
+            catch (Exception)
+            {
+                return CreateResponse<ResponseNumber>(null, "Error when getting total count of student!");
             }
         }
     }

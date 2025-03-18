@@ -20,10 +20,10 @@ namespace StudentManagement.Pages
         private string? messageDelete = null;
         private string? messageAdd = null;
 
-        private string studentId;
-        private string studentName;
+        private string? studentId;
+        private string? studentName;
         private DateTime? studentDob;
-        private string studentAddress;
+        private string? studentAddress;
         private Class? selectedClass;
 
         private bool isSubmitted = false;
@@ -31,16 +31,16 @@ namespace StudentManagement.Pages
         private int selectedClassId;
         private bool visible;
         private bool isEditMode = false;
-        private string txtValue { get; set; }
+        private string? txtValue { get; set; }
 
         private int currentPage = 1;
-        private int pageSize = 10;
+        private int pageSize = 5;
         private int totalStudents = 0;
 
         protected override async Task OnInitializedAsync()
         {
             await LoadStudents();
-            classList = await _studentManager.GetAllClass();
+            classList = await _studentManager.GetAllClassesAsync();
             selectedClass = classList[0];
             totalStudents = await _studentManager.GetTotalCountAsync();
         }
@@ -48,12 +48,22 @@ namespace StudentManagement.Pages
         private async Task HandlePageChange(PaginationEventArgs args)
         {
             currentPage = args.Page;
-            students = await _studentManager.GetStudentList(currentPage, pageSize);
+            students = await _studentManager.GetStudentListAsync(currentPage, pageSize);
         }
 
         private async Task Handle(string value)
         {
             txtValue = value;
+
+            if (string.IsNullOrEmpty(value))
+            {
+                await LoadStudents();
+                currentPage = 1;
+                totalStudents = await _studentManager.GetTotalCountAsync();
+                StateHasChanged();
+                return;
+            }
+
             var student = await _studentManager.GetStudentByIdAsync(value);
             var listStudentSearch = new List<Student>();
             if (student != null)
@@ -62,22 +72,20 @@ namespace StudentManagement.Pages
             }
             students = listStudentSearch;
 
-            totalStudents = await _studentManager.GetTotalCountAsync();
+            currentPage = 1;
+
+            totalStudents = students.Count;
+
             StateHasChanged();
         }
 
         private void Close() => visible = false;
 
-        private void Open()
-        {
-            ResetForm();
-            isEditMode = false;
-            visible = true;
-        }
+
 
         private async Task SortStudentByName()
         {
-            students = await _studentManager.GetStudentList(1, pageSize, true);
+            students = await _studentManager.GetStudentListAsync(1, pageSize, true);
             StateHasChanged();
         }
 
@@ -91,6 +99,13 @@ namespace StudentManagement.Pages
             selectedClass = classList.FirstOrDefault(c => c.Id == selectedClassId);
 
             isEditMode = true;
+            visible = true;
+        }
+
+        private void Open()
+        {
+            ResetForm();
+            isEditMode = false;
             visible = true;
         }
 
@@ -127,20 +142,20 @@ namespace StudentManagement.Pages
 
             Student s = new Student
             {
-                Id = studentId,
-                Name = studentName,
-                Address = studentAddress,
+                Id = studentId ?? "",
+                Name = studentName ?? "",
+                Address = studentAddress ?? "",
                 DateOfBirth = studentDob ?? default,
                 Class = classList.FirstOrDefault(c => c.Id == selectedClassId)
             };
 
             if (isEditMode)
             {
-                messageAdd = await _studentManager.AddOrUpdateStudent(s, true);
+                messageAdd = await _studentManager.AddOrUpdateStudentAsync(s, true);
             }
             else
             {
-                messageAdd = await _studentManager.AddOrUpdateStudent(s);
+                messageAdd = await _studentManager.AddOrUpdateStudentAsync(s);
             }
             totalStudents = await _studentManager.GetTotalCountAsync();
 
@@ -152,18 +167,18 @@ namespace StudentManagement.Pages
 
         private async Task LoadStudents()
         {
-            students = await _studentManager.GetStudentList(1, pageSize);
+            students = await _studentManager.GetStudentListAsync(1, pageSize);
         }
 
         protected async Task DeleteStudent(string id)
         {
-            var res = await _studentManager.DeleteStudent(id);
+            var res = await _studentManager.DeleteStudentAsync(id);
             if (!string.IsNullOrEmpty(res))
             {
                 messageDelete = res;
                 StateHasChanged();
             }
-            students = await _studentManager.GetStudentList(1, pageSize);
+            students = await _studentManager.GetStudentListAsync(1, pageSize);
             totalStudents = await _studentManager.GetTotalCountAsync();
             currentPage = 1;
         }

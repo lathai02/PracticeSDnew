@@ -237,9 +237,10 @@
         </Space>
     </ActionColumn>
 </Table>
-<br/>
+<br />
 <AntDesign.Pagination PageIndex="@currentPage"
                       Total="@totalStudents"
                       PageSize="@pageSize"
+                      Disabled="@((totalStudents <= pageSize) || totalStudents == 0)"
                       OnChange="(p)=>HandlePageChange(p)">
 </AntDesign.Pagination>

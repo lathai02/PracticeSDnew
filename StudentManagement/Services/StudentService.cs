@@ -19,65 +19,44 @@ namespace StudentManagement.Services
             _mapper = mapper;
         }
 
-        public async Task<List<Student>> GetStudentList(int pageNumber, int pageSize, bool sorted = false)
+        public async Task<List<Student>> GetStudentListAsync(int pageNumber, int pageSize, bool sorted = false)
         {
+            var request = new PagingRequest { PageNumber = pageNumber, PageSize = pageSize };
             var response = sorted
-                ? await _studentProto.SortStudentListByNameAsync(new PagingRequest { PageNumber = pageNumber, PageSize = pageSize })
-                : await _studentProto.GetListStudentAsync(new PagingRequest { PageNumber = pageNumber, PageSize = pageSize });
+                ? await _studentProto.SortStudentListByNameAsync(request)
+                : await _studentProto.GetListStudentAsync(request);
 
-            var students = _mapper.Map<List<Student>>(response.Data);
-
-            return students;
+            return _mapper.Map<List<Student>>(response.Data);
         }
 
         public async Task<int> GetTotalCountAsync()
         {
-            var res = await _studentProto.GetTotalCountAsync(new Empty());
-
-            return res.Data.TotalItem;
+            var response = await _studentProto.GetTotalCountAsync(new Empty());
+            return response.Data.TotalItem;
         }
 
-        public async Task<string> AddOrUpdateStudent(Student student, bool isUpdate = false)
+        public async Task<string> AddOrUpdateStudentAsync(Student student, bool isUpdate = false)
         {
+            var existingStudent = await GetStudentByIdAsync(student.Id);
 
-            var res = await GetStudentByIdAsync(student.Id);
-            if (isUpdate && res == null)
-            {
-                return "Student ID not found. Cannot update.";
-            }
-            else if (!isUpdate && res != null)
-            {
-                return "Student ID already exists. Cannot add a new student with this ID.";
-            }
-
-            var request = _mapper.Map<RequestStudentAdd>(student);
             if (isUpdate)
             {
-                await _studentProto.UpdateStudentAsync(request);
+                if (existingStudent == null) return "Student ID not found. Cannot update.";
+                await _studentProto.UpdateStudentAsync(_mapper.Map<RequestStudentAdd>(student));
                 return "Student updated successfully.";
             }
             else
             {
-                await _studentProto.AddStudentAsync(request);
+                if (existingStudent != null) return "Student ID already exists. Cannot add a new student with this ID.";
+                await _studentProto.AddStudentAsync(_mapper.Map<RequestStudentAdd>(student));
                 return "Student added successfully.";
             }
         }
 
-        public async Task<string> DeleteStudent(string studentId)
+        public async Task<string> DeleteStudentAsync(string studentId)
         {
-            var res = await _studentProto.DeleteStudentAsync(new RequestStudent { StudentId = studentId });
-
-            return res.Message;
-        }
-
-        public async Task SearchStudentById()
-        {
-            var studentId = StringUtils.InputString("Enter student ID to search:", AppConstants.STUDENT_ID_PARTERN);
-            var student = await GetStudentByIdAsync(studentId);
-            if (student != null)
-            {
-                Console.WriteLine(student);
-            }
+            var response = await _studentProto.DeleteStudentAsync(new RequestStudent { StudentId = studentId });
+            return response.Message;
         }
 
         public async Task<Student> GetStudentByIdAsync(string studentId)
@@ -86,7 +65,7 @@ namespace StudentManagement.Services
             return response.Data == null ? null : _mapper.Map<Student>(response.Data);
         }
 
-        public async Task<List<Class>> GetAllClass()
+        public async Task<List<Class>> GetAllClassesAsync()
         {
             var response = await _classProto.GetAllClassWithTeacherAsync(new Empty());
             return _mapper.Map<List<Class>>(response.Data);

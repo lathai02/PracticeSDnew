@@ -34,7 +34,7 @@ namespace StudentManagement.Pages
         private string txtValue { get; set; }
 
         private int currentPage = 1;
-        private int pageSize = 5;
+        private int pageSize = 10;
         private int totalStudents = 0;
 
         protected override async Task OnInitializedAsync()

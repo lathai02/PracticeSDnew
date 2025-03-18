@@ -45,6 +45,7 @@ namespace RepositoriesUseNHibernate.Implements
                 await _session.MergeAsync(entity);
                 await transaction.CommitAsync();
             }
+
         }
 
         public async Task DeleteAsync(T entity)

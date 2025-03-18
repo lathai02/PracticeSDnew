@@ -11,9 +11,11 @@ namespace Shares.Utils
         public static int InputIntegerNumber(string message, int min, int max)
         {
             int number;
+
             while (true)
             {
                 Console.Write(message);
+
                 if (int.TryParse(Console.ReadLine(), out number))
                 {
                     if (number >= min && number <= max)

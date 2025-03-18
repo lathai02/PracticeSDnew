@@ -17,6 +17,7 @@ namespace Repositories.Implements
         {
             _schoolDbContext = schoolDbContext;
         }
+
         public List<Class> GetAllClass()
         {
             return _schoolDbContext.Classes.Include(t => t.Teacher).ToList();

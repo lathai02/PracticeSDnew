@@ -1,0 +1,245 @@
+﻿@page "/students-table"
+@using System.ComponentModel
+@using AntDesign
+@using Shares.Constants
+@using System.Globalization
+@using Shares.Models
+
+<style>
+
+    .ant-table-pagination {
+        display: none;
+    }
+
+    .student-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 24px;
+        background: #f0f2f5;
+        border: 1px solid #d9d9d9;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-item {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+        .form-item Input,
+        .form-item Select,
+        .form-item DatePicker {
+            width: 100%;
+        }
+
+    .student-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 30px;
+        background: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease;
+    }
+
+        .student-form:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+    .form-item {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+        .form-item Text {
+            font-weight: 500;
+            font-size: 16px;
+            color: #555;
+        }
+
+        .form-item Input,
+        .form-item Select,
+        .form-item DatePicker {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            font-size: 14px;
+            background-color: #f7f7f7;
+            transition: border-color 0.3s ease;
+        }
+
+            .form-item Input:focus,
+            .form-item Select:focus,
+            .form-item DatePicker:focus {
+                border-color: #1890ff;
+                background-color: #ffffff;
+                outline: none;
+            }
+
+            .form-item Input::placeholder,
+            .form-item Select::placeholder,
+            .form-item DatePicker::placeholder {
+                color: #bbb;
+            }
+
+        .form-item .ant-alert {
+            margin-top: 4px;
+        }
+
+    button {
+        padding: 10px 20px;
+        background-color: #1890ff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+        button:hover {
+            background-color: #40a9ff;
+        }
+
+        button:disabled {
+            background-color: #f0f0f0;
+            color: #bfbfbf;
+            cursor: not-allowed;
+        }
+
+    .alert-container {
+        margin-top: 10px;
+    }
+
+        .alert-container .ant-alert-info {
+            margin-bottom: 10px;
+        }
+</style>
+
+<h3>StudentManager</h3>
+@if (messageDelete != null)
+{
+    <Alert Message="@messageDelete" Type="AlertType.Success" ShowIcon="true" />
+}
+<br />
+<div>
+    <Button Type="ButtonType.Primary" @onclick="() => SortStudentByName()">Sort by name</Button>
+    <Button Icon="@IconType.Outline.Plus" Type="ButtonType.Primary" @onclick="() => Open()">Create a new student</Button>
+    <Drawer Closable="true" Width="720" Visible="@visible" OnClose="Close">
+        <Template style="height:90%">
+            <h3>@(isEditMode ? "Edit Student" : "Add Student")</h3>
+            <br />
+            @if (messageAdd != null)
+            {
+                <Alert Message="@messageAdd" Type="AlertType.Info" ShowIcon="true" />
+            }
+            <br />
+            <div class="student-form">
+                <div class="form-item">
+                    <Text>Id:</Text>
+                    <Input @bind-Value="@studentId" OnChange="@OnStudentIdChange" Disabled="@isEditMode" />
+                    @if (isSubmitted && string.IsNullOrEmpty(studentId))
+                    {
+                        <Alert Message="Id is required" Type="AlertType.Error" ShowIcon="true" />
+                    }
+                    @if (!string.IsNullOrEmpty(studentIdError))
+                    {
+                        <Alert Message="@studentIdError" Type="AlertType.Error" ShowIcon="true" />
+                    }
+                </div>
+
+                <div class="form-item">
+                    <Text>Name:</Text>
+                    <Input @bind-Value="@studentName" />
+                    @if (isSubmitted && string.IsNullOrEmpty(studentName))
+                    {
+                        <Alert Message="Name is required" Type="AlertType.Error" ShowIcon="true" />
+                    }
+                </div>
+
+                <div class="form-item">
+                    <Text>Date of birth:</Text>
+                    <DatePicker @bind-Value="@studentDob" Format="@AppConstants.DATE_FORMAT" OnChange="@OnStudentDobChange" />
+                    @if (isSubmitted && studentDob == default)
+                    {
+                        <Alert Message="Date of birth is required" Type="AlertType.Error" ShowIcon="true" />
+                    }
+                </div>
+
+                <div class="form-item">
+                    <Text>Address:</Text>
+                    <Input @bind-Value="@studentAddress" />
+                    @if (isSubmitted && string.IsNullOrEmpty(studentAddress))
+                    {
+                        <Alert Message="Address is required" Type="AlertType.Error" ShowIcon="true" />
+                    }
+                </div>
+
+                <div class="form-item">
+                    <Text>Class:</Text>
+                    <Select TItem="Class"
+                            TItemValue="int"
+                            DataSource="@classList"
+                            @bind-Value="@selectedClassId"
+                            ValueName="@nameof(Class.Id)"
+                            LabelName="@nameof(Class.Name)"
+                            GroupName="@nameof(Class.Subject)"
+                            SortByLabel="SortDirection.Ascending"
+                            SortByGroup="SortDirection.Ascending"
+                            OnSelectedItemChanged="OnSelectedItemChangedHandler"
+                            DefaultActiveFirstOption="true"
+                            Style="width: 100%;">
+                    </Select>
+                    @if (isSubmitted && selectedClassId == 0)
+                    {
+                        <Alert Message="Class is required" Type="AlertType.Error" ShowIcon="true" />
+                    }
+                </div>
+
+                <Button Type="ButtonType.Primary" OnClick="SubmitForm">
+                    @(isEditMode ? "Update" : "Submit")
+                </Button>
+            </div>
+        </Template>
+    </Drawer>
+</div>
+<br />
+
+<div>
+    <Search Placeholder="input search text" OnChange="(e)=>Handle(e)" EnterButton="true" @bind-Value="@txtValue" />
+</div>
+<br />
+
+<Table DataSource="@students" Bordered="true" Size="TableSize.Middle">
+    <PropertyColumn Property="s=>s.Id"></PropertyColumn>
+    <PropertyColumn Property="c=>c.Name"></PropertyColumn>
+    <PropertyColumn Property="c=>c.DateOfBirth"></PropertyColumn>
+    <PropertyColumn Property="c=>c.Address"></PropertyColumn>
+    <PropertyColumn Property="c => c.Class.Name" Title="Class Name"></PropertyColumn>
+    <ActionColumn Title="Action">
+        <Space Size="SpaceSize.Middle">
+            <SpaceItem>
+                <button @onclick="() => UpdateStudent(context, context.Class)" class="btn btn-primary">Update</button>
+            </SpaceItem>
+            <SpaceItem>
+                <button @onclick="() => DeleteStudent(context.Id)" class="btn btn-danger">Delete</button>
+            </SpaceItem>
+        </Space>
+    </ActionColumn>
+</Table>
+<br/>
+<AntDesign.Pagination PageIndex="@currentPage"
+                      Total="@totalStudents"
+                      PageSize="@pageSize"
+                      OnChange="(p)=>HandlePageChange(p)">
+</AntDesign.Pagination>

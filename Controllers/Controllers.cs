@@ -1,4 +1,8 @@
-﻿using Services.Interfaces;
+﻿using AutoMapper;
+using NHibernate.Mapping.ByCode.Impl;
+using Shares.Constants;
+using Shares.Models;
+using Shares.ServiceContracts;
 using Shares.Utils;
 using System;
 using System.Collections.Generic;
@@ -10,24 +14,16 @@ namespace Controllers
 {
     public class Controllers
     {
-        private readonly IStudentService _studentService;
+        private readonly StudentManager _studentManager;
 
-        public Controllers(IStudentService studentService)
+        public Controllers(StudentManager studentManager)
         {
-            _studentService = studentService;
+            _studentManager = studentManager;
         }
 
-        public void ManageStudent()
+        public async Task ManageStudentAsync()
         {
-            List<string> menuFeature = new List<string> {
-                "1.Show student list:",
-                "2.Add Student:",
-                "3.Update student by Id:",
-                "4.Delete student by Id:",
-                "5.Sort student list by name:",
-                "6.Search by student id:",
-                "7.Exit." };
-
+            List<string> menuFeature = (List<string>)AppConstants.MENU_FEATURE;
             bool exitFlag = false;
 
             do
@@ -41,27 +37,27 @@ namespace Controllers
 
                 try
                 {
-                    int chooseNum = 0;
-                    chooseNum = NumberUtils.InputIntegerNumber("Please choose a feature by number:", 1, 7);
+                    int chooseNum = NumberUtils.InputIntegerNumber("Please choose a feature by number:", 1, 7);
 
                     switch (chooseNum)
                     {
                         case 1:
-                            _studentService.PrintStudentList();
+                            await _studentManager.DisplayStudentList();
                             break;
                         case 2:
-                            _studentService.AddStudent();
+                            await _studentManager.AddOrUpdateStudent();
                             break;
                         case 3:
-                            _studentService.UpdateStudent();
+                            await _studentManager.AddOrUpdateStudent(true);
                             break;
                         case 4:
-                            _studentService.DeleteStudent();
+                            await _studentManager.DeleteStudent();
                             break;
                         case 5:
+                            await _studentManager.DisplayStudentList(true);
                             break;
                         case 6:
-                            _studentService.SearchByStudentId();
+                            await _studentManager.SearchStudentById();
                             break;
                         case 7:
                             exitFlag = true;

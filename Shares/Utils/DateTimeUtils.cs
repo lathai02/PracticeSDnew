@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Shares.Constants;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,33 +10,23 @@ namespace Shares.Utils
 {
     public static class DateTimeUtils
     {
-        public static DateTime InputDateTime(string message)
+        public static DateTime InputDateTime(string message, string format = AppConstants.DATE_FORMAT)
         {
             DateTime date;
+
+
             while (true)
             {
                 Console.Write(message);
-                if (!DateTime.TryParse(Console.ReadLine(), out date))
+                string? input = Console.ReadLine();
+
+                if (!DateTime.TryParseExact(input, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out date))
                 {
-                    Console.WriteLine("Error: Invalid date format! Please try again.");
+                    Console.WriteLine($"Error: Invalid date format! Please enter the date in '{format}' format.");
                     continue;
                 }
+
                 return date;
-            }
-        }
-
-        public static DateOnly InputDateOnly(string message, string formart)
-        {
-            while (true)
-            {
-                Console.Write(message);
-                string input = Console.ReadLine() ?? "";
-
-                if (DateOnly.TryParseExact(input, formart, null, System.Globalization.DateTimeStyles.None, out DateOnly date))
-                {
-                    return date;
-                }
-                Console.WriteLine("Error: Invalid date format! Please try again.");
             }
         }
     }

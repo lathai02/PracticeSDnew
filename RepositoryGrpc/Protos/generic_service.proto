@@ -1,0 +1,35 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "RepositoryGrpc.Protos";
+
+// ✅ Dịch vụ Generic cho mọi Entity
+service GenericService {
+  rpc GetAll (Empty) returns (GenericListResponse);
+  rpc GetById (GenericRequest) returns (GenericResponse);
+  rpc Add (GenericEntity) returns (Empty);
+  rpc Update (GenericEntity) returns (Empty);
+  rpc Delete (GenericRequest) returns (Empty);
+}
+
+// 📌 Empty Message
+message Empty {}
+
+// 📌 Generic Request & Response
+message GenericRequest {
+  string id = 1;
+}
+
+message GenericResponse {
+  GenericEntity entity = 1;
+}
+
+// 📌 Generic Entity
+message GenericEntity {
+  string id = 1;
+  map<string, string> fields = 2;
+}
+
+// 📌 Generic List Response
+message GenericListResponse {
+  repeated GenericEntity entities = 1;
+}

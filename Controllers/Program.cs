@@ -1,29 +1,45 @@
-﻿using Controllers;
+﻿using Grpc.Net.Client;
 using Microsoft.Extensions.DependencyInjection;
-using Repositories;
-using Repositories.Implements;
-using Repositories.Interfaces;
-using Services.Implements;
-using Services.Interfaces;
+using ProtoBuf.Grpc.Client;
+using Shares.ServiceContracts;
+using Controllers;
+using Microsoft.Extensions.Configuration;
+using Shares.MappingProfiles;
 
 namespace Controllers
 {
     static class Program
     {
-        static void Main()
+        static async Task Main()
         {
+            var configuration = new ConfigurationBuilder()
+                      .SetBasePath(Directory.GetCurrentDirectory())
+                      .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                      .Build();
+
+            string grpcUrl = configuration.GetSection("GrpcServer")["Url"] ?? throw new InvalidOperationException("Cannot find gRPC URL!");
+
             var serviceProvider = new ServiceCollection()
+                // Khởi tạo GrpcChannel một lần
+                .AddSingleton(GrpcChannel.ForAddress(grpcUrl))
+
+                // Tạo gRPC service từ GrpcChannel
+                .AddSingleton(serviceProvider =>
+                    serviceProvider.GetRequiredService<GrpcChannel>().CreateGrpcService<IStudentProto>())
+                .AddSingleton(serviceProvider =>
+                    serviceProvider.GetRequiredService<GrpcChannel>().CreateGrpcService<IClassProto>())
+
+                // AutoMapper chỉ cần thêm 1 lần với nhiều profiles
+                .AddAutoMapper(typeof(ClassMappingProfile), typeof(StudentMappingProfile))
+
+                // Controller
+                .AddSingleton<StudentManager>()
                 .AddSingleton<Controllers>()
-                .AddDbContext<SchoolDbContext>()
-                .AddSingleton<IStudentService, StudentService>()
-                .AddSingleton<IStudentRepository, StudentRepository>()
-                .AddSingleton<IClassRepository, ClassRepository>()
+
                 .BuildServiceProvider();
 
             var studentController = serviceProvider.GetRequiredService<Controllers>();
-            studentController.ManageStudent();
+            await studentController.ManageStudentAsync();
         }
     }
 }
-
-

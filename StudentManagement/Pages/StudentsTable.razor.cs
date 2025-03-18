@@ -52,7 +52,7 @@ namespace StudentManagement.Pages
 
             if (string.IsNullOrEmpty(value))
             {
-                await GetStudentCurrentPage(1);
+                await GetStudentCurrentPage(currentPage);
                 StateHasChanged();
                 return;
             }
@@ -72,7 +72,7 @@ namespace StudentManagement.Pages
 
         private async Task OnSortByNameChanged()
         {
-            await GetStudentCurrentPage(1, isSortByName);
+            await GetStudentCurrentPage(currentPage, isSortByName);
         }
 
         private async Task SubmitForm()

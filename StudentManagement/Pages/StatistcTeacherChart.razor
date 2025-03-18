@@ -1,0 +1,39 @@
+﻿@page "/teacher-statistics"
+@using AntDesign.Charts
+@using Title = AntDesign.Charts.Title
+@using AntDesign
+
+<Tabs>
+    <TabPane Key="1">
+        <TabTemplate>Thống kê môn học của Thầy Thái</TabTemplate>
+        <ChildContent>
+            <AntDesign.Charts.Column Data="data1" Config="config1" />
+        </ChildContent>
+    </TabPane>
+</Tabs>
+
+@code {
+    object[] data1 = new object[] {
+        new { Subject = "Toán", Type = "Số lượng lớp", Value = 5 },
+        new { Subject = "Toán", Type = "Số học sinh", Value = 150 },
+        new { Subject = "Văn", Type = "Số lượng lớp", Value = 4 },
+        new { Subject = "Văn", Type = "Số học sinh", Value = 120 },
+        new { Subject = "Anh", Type = "Số lượng lớp", Value = 6 },
+        new { Subject = "Anh", Type = "Số học sinh", Value = 180 },
+        new { Subject = "Lý", Type = "Số lượng lớp", Value = 3 },
+        new { Subject = "Lý", Type = "Số học sinh", Value = 90 },
+        new { Subject = "Hoá", Type = "Số lượng lớp", Value = 2 },
+        new { Subject = "Hoá", Type = "Số học sinh", Value = 60 },
+    };
+
+    ColumnConfig config1 = new()
+        {
+            IsGroup = true,
+            XField = "subject",
+            YField = "value",
+            YAxis = new ValueAxis() { Min = 0 },
+            Label = new ColumnViewConfigLabel() { Visible = true },
+            SeriesField = "type",
+            Color = new string[] { "#1ca9e6", "#f88c24" },
+        };
+}

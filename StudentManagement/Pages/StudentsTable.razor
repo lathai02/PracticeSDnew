@@ -1,11 +1,15 @@
 ﻿@page "/students-table"
 @using System.ComponentModel
 @using AntDesign
+@using AntDesign
 @using Shares.Constants
 @using System.Globalization
 @using Shares.Models
 
 <style>
+    .ant-notification {
+        z-index: 9999;
+    }
 
     .ant-table-pagination {
         display: none;
@@ -127,22 +131,12 @@
 </style>
 
 <h3>StudentManager</h3>
-@if (messageDelete != null)
-{
-    <Alert Message="@messageDelete" Type="AlertType.Success" ShowIcon="true" />
-}
-<br />
+<Notification />
 <div>
-    <Button Type="ButtonType.Primary" @onclick="() => SortStudentByName()">Sort by name</Button>
     <Button Icon="@IconType.Outline.Plus" Type="ButtonType.Primary" @onclick="() => Open()">Create a new student</Button>
     <Drawer Closable="true" Width="720" Visible="@visible" OnClose="Close">
         <Template style="height:90%">
             <h3>@(isEditMode ? "Edit Student" : "Add Student")</h3>
-            <br />
-            @if (messageAdd != null)
-            {
-                <Alert Message="@messageAdd" Type="AlertType.Info" ShowIcon="true" />
-            }
             <br />
             <div class="student-form">
                 <div class="form-item">
@@ -219,7 +213,10 @@
     <Search Placeholder="input search text" OnChange="(e)=>Handle(e)" EnterButton="true" @bind-Value="@txtValue" />
 </div>
 <br />
-
+<div>
+    Sort by name
+    <Switch @bind-Checked="isSortByName" onchange="OnSortByNameChanged" />
+</div>
 <Table DataSource="@students" Bordered="true" Size="TableSize.Middle">
     <PropertyColumn Property="s=>s.Id"></PropertyColumn>
     <PropertyColumn Property="c=>c.Name"></PropertyColumn>
@@ -229,7 +226,7 @@
     <ActionColumn Title="Action">
         <Space Size="SpaceSize.Middle">
             <SpaceItem>
-                <button @onclick="() => UpdateStudent(context, context.Class)" class="btn btn-primary">Update</button>
+                <button @onclick="() => UpdateStudent(context)" class="btn btn-primary">Update</button>
             </SpaceItem>
             <SpaceItem>
                 <button @onclick="() => DeleteStudent(context.Id)" class="btn btn-danger">Delete</button>

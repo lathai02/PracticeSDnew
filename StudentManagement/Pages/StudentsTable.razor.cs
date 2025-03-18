@@ -12,13 +12,13 @@ namespace StudentManagement.Pages
     public partial class StudentsTable : ComponentBase
     {
         [Inject]
-        public StudentService _studentManager { get; set; } = default!;
+        private StudentService _studentManager { get; set; } = default!;
+
+        [Inject]
+        private NotificationService _notificationService { get; set; } = default!;
 
         private List<Student> students = new();
         private List<Class> classList = new();
-
-        private string? messageDelete = null;
-        private string? messageAdd = null;
 
         private string? studentId;
         private string? studentName;
@@ -34,21 +34,16 @@ namespace StudentManagement.Pages
         private string? txtValue { get; set; }
 
         private int currentPage = 1;
-        private int pageSize = 5;
+        private int pageSize = AppConstants.PAGE_SIZE;
         private int totalStudents = 0;
+        private bool isSortByName { get; set; } = false;
 
         protected override async Task OnInitializedAsync()
         {
-            await LoadStudents();
+            await GetStudentCurrentPage();
             classList = await _studentManager.GetAllClassesAsync();
             selectedClass = classList[0];
             totalStudents = await _studentManager.GetTotalCountAsync();
-        }
-
-        private async Task HandlePageChange(PaginationEventArgs args)
-        {
-            currentPage = args.Page;
-            students = await _studentManager.GetStudentListAsync(currentPage, pageSize);
         }
 
         private async Task Handle(string value)
@@ -57,9 +52,7 @@ namespace StudentManagement.Pages
 
             if (string.IsNullOrEmpty(value))
             {
-                await LoadStudents();
-                currentPage = 1;
-                totalStudents = await _studentManager.GetTotalCountAsync();
+                await GetStudentCurrentPage(1);
                 StateHasChanged();
                 return;
             }
@@ -72,63 +65,14 @@ namespace StudentManagement.Pages
             }
             students = listStudentSearch;
 
-            currentPage = 1;
-
             totalStudents = students.Count;
 
             StateHasChanged();
         }
 
-        private void Close() => visible = false;
-
-
-
-        private async Task SortStudentByName()
+        private async Task OnSortByNameChanged()
         {
-            students = await _studentManager.GetStudentListAsync(1, pageSize, true);
-            StateHasChanged();
-        }
-
-        private void Open(Student student)
-        {
-            studentId = student.Id;
-            studentName = student.Name;
-            studentAddress = student.Address;
-            studentDob = student.DateOfBirth;
-            selectedClassId = student.Class?.Id ?? 0;
-            selectedClass = classList.FirstOrDefault(c => c.Id == selectedClassId);
-
-            isEditMode = true;
-            visible = true;
-        }
-
-        private void Open()
-        {
-            ResetForm();
-            isEditMode = false;
-            visible = true;
-        }
-
-        private void ResetForm()
-        {
-            studentId = string.Empty;
-            studentName = string.Empty;
-            studentAddress = string.Empty;
-            studentDob = null;
-            selectedClassId = 0;
-            messageAdd = null;
-            isSubmitted = false;
-            studentIdError = string.Empty;
-        }
-
-        protected void UpdateStudent(Student student, Class c)
-        {
-            Open(student);
-        }
-
-        private void OnSelectedItemChangedHandler(Class value)
-        {
-            selectedClass = value;
+            await GetStudentCurrentPage(1, isSortByName);
         }
 
         private async Task SubmitForm()
@@ -149,38 +93,87 @@ namespace StudentManagement.Pages
                 Class = classList.FirstOrDefault(c => c.Id == selectedClassId)
             };
 
+            string message;
             if (isEditMode)
             {
-                messageAdd = await _studentManager.AddOrUpdateStudentAsync(s, true);
+                message = await _studentManager.AddOrUpdateStudentAsync(s, true);
+
             }
             else
             {
-                messageAdd = await _studentManager.AddOrUpdateStudentAsync(s);
+                message = await _studentManager.AddOrUpdateStudentAsync(s);
             }
-            totalStudents = await _studentManager.GetTotalCountAsync();
+            await GetStudentCurrentPage(currentPage);
 
-            await LoadStudents();
-            StateHasChanged();
-            Close();
-            currentPage = 1;
-        }
-
-        private async Task LoadStudents()
-        {
-            students = await _studentManager.GetStudentListAsync(1, pageSize);
+            //Close();
+            await ShowNotification(message, isEditMode ? "Update Student" : "Add student");
         }
 
         protected async Task DeleteStudent(string id)
         {
             var res = await _studentManager.DeleteStudentAsync(id);
+
+            await GetStudentCurrentPage(currentPage);
+
             if (!string.IsNullOrEmpty(res))
             {
-                messageDelete = res;
-                StateHasChanged();
+                await ShowNotification("Delete Student", res, NotificationType.Success);
             }
-            students = await _studentManager.GetStudentListAsync(1, pageSize);
+            else
+            {
+                await ShowNotification("Delete Student", "Failed to delete student", NotificationType.Error);
+            }
+        }
+
+        private async Task GetStudentCurrentPage(int currentPage = 1, bool isSortByName = false)
+        {
+            this.currentPage = currentPage;
+            students = await _studentManager.GetStudentListAsync(currentPage, pageSize, isSortByName);
             totalStudents = await _studentManager.GetTotalCountAsync();
-            currentPage = 1;
+            StateHasChanged();
+        }
+
+        private void SetStudentDetails(Student student)
+        {
+            studentId = student.Id;
+            studentName = student.Name;
+            studentAddress = student.Address;
+            studentDob = student.DateOfBirth;
+            selectedClassId = student.Class?.Id ?? 0;
+            selectedClass = classList.FirstOrDefault(c => c.Id == selectedClassId);
+        }
+
+        private void Close() => visible = false;
+
+        private async Task HandlePageChange(PaginationEventArgs args)
+        {
+            currentPage = args.Page;
+            await GetStudentCurrentPage(currentPage, isSortByName);
+        }
+
+        private void ResetForm()
+        {
+            studentId = string.Empty;
+            studentName = string.Empty;
+            studentAddress = string.Empty;
+            studentDob = null;
+            selectedClassId = 0;
+            isSubmitted = false;
+            studentIdError = string.Empty;
+        }
+
+        private void Open(Student student)
+        {
+            SetStudentDetails(student);
+            isEditMode = true;
+            visible = true;
+        }
+
+        private void Open()
+        {
+            ResetForm();
+            isEditMode = false;
+            visible = true;
         }
 
         private bool IsFormInvalid()
@@ -190,6 +183,16 @@ namespace StudentManagement.Pages
                    studentDob == default ||
                    string.IsNullOrEmpty(studentAddress) ||
                    selectedClassId == 0;
+        }
+
+        private void UpdateStudent(Student student)
+        {
+            Open(student);
+        }
+
+        private void OnSelectedItemChangedHandler(Class value)
+        {
+            selectedClass = value;
         }
 
         private EventCallback<string> OnStudentIdChange => EventCallback.Factory.Create<string>(this, ValidateStudentId);
@@ -208,6 +211,24 @@ namespace StudentManagement.Pages
         private void OnDobChange(DateTimeChangedEventArgs<DateTime?> args)
         {
             studentDob = args.Date;
+        }
+
+        protected async Task ShowNotification(string title, string message, NotificationType type = NotificationType.Success)
+        {
+            Console.WriteLine($"ShowNotification called: {title} - {message}");
+            if (_notificationService == null)
+            {
+                Console.WriteLine("NotificationService is null!");
+                return;
+            }
+
+            await _notificationService.Open(new NotificationConfig()
+            {
+                Message = title,
+                Description = message,
+                NotificationType = type,
+                Duration = 4
+            });
         }
     }
 }

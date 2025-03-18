@@ -23,15 +23,11 @@ namespace RepositoriesUseNHibernate.Implements
         {
             try
             {
-                Console.WriteLine($"Session open: {_session.IsOpen}");
-                var res = _session.Query<Student>()
+                return await _session.Query<Student>()
                                   .Fetch(s => s.Class)
-                                  .Skip((pageNumber - 1) * pageSize) // Bỏ qua các item của trang trước
-                                  .Take(pageSize);                  // Lấy số lượng item của trang hiện tại
-
-                var res2 = await res.ToListAsync();
-                Console.WriteLine($"After query, session open: {_session.IsOpen}");
-                return res2;
+                                  .Skip((pageNumber - 1) * pageSize)
+                                  .Take(pageSize)
+                                  .ToListAsync();
             }
             catch (Exception e)
             {

@@ -23,7 +23,7 @@ namespace Shares.ServiceContracts
     public class RequestStudentAdd
     {
         [DataMember(Order = 1)]
-        public string Id { get; set; }
+        public string Id { get; set; } = null!;
 
         [DataMember(Order = 2)]
         public string Name { get; set; } = string.Empty;

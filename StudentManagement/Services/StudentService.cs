@@ -59,7 +59,7 @@ namespace StudentManagement.Services
             return response.Message;
         }
 
-        public async Task<Student> GetStudentByIdAsync(string studentId)
+        public async Task<Student?> GetStudentByIdAsync(string studentId)
         {
             var response = await _studentProto.SearchByStudentIdAsync(new RequestStudent { StudentId = studentId });
             return response.Data == null ? null : _mapper.Map<Student>(response.Data);

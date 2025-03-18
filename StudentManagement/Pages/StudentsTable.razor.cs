@@ -105,7 +105,7 @@ namespace StudentManagement.Pages
             }
             await GetStudentCurrentPage(currentPage);
 
-            //Close();
+            Close();          
             await ShowNotification(message, isEditMode ? "Update Student" : "Add student");
         }
 

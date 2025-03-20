@@ -78,5 +78,11 @@ namespace StudentManagement.Services
             var response = await _classProto.GetAllClassWithTeacherAsync(new Empty());
             return _mapper.Map<List<Class>>(response.Data);
         }
+
+        public async Task<List<TeacherResponseChart>> GetAllTeacherAsync()
+        {
+            var response = await _teacherProto.GetAllTeacher(new Empty());
+            return response.Data!;
+        }
     }
 }

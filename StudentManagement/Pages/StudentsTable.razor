@@ -216,19 +216,20 @@
     Sort by name
     <Switch @bind-Checked="isSortByName" onchange="OnSortByNameChanged" />
 </div>
-<Table DataSource="@students" Bordered="true" Size="TableSize.Middle">
+<Table DataSource="@studentDtos" Bordered="true" Size="TableSize.Middle">
+    <PropertyColumn Property="s=>s.Number"></PropertyColumn>
     <PropertyColumn Property="s=>s.Id"></PropertyColumn>
     <PropertyColumn Property="c=>c.Name"></PropertyColumn>
     <PropertyColumn Property="c=>c.DateOfBirth"></PropertyColumn>
     <PropertyColumn Property="c=>c.Address"></PropertyColumn>
-    <PropertyColumn Property="c => c.Class.Name" Title="Class Name"></PropertyColumn>
+    <PropertyColumn Property="c => c.Class!.Name" Title="Class Name"></PropertyColumn>
     <ActionColumn Title="Action">
         <Space Size="SpaceSize.Middle">
             <SpaceItem>
                 <button @onclick="() => UpdateStudent(context)" class="btn btn-primary">Update</button>
             </SpaceItem>
             <SpaceItem>
-                <button @onclick="() => DeleteStudent(context.Id)" class="btn btn-danger">Delete</button>
+                <button @onclick="() => DeleteStudent(context.Id!)" class="btn btn-danger">Delete</button>
             </SpaceItem>
         </Space>
     </ActionColumn>

@@ -15,6 +15,13 @@ namespace GrpcService.Services.Implements
             _mapper = mapper;
         }
 
+        public async Task<ResponseObj<List<TeacherResponseChart>>> GetAllTeacher(Empty request)
+        {
+            var teachers = await _teacherRepository.GetAllAsync();
+            var teacherResponse = _mapper.Map<List<TeacherResponseChart>>(teachers);
+            return CreateResponse(teacherResponse, "Get success");
+        }
+
         public async Task<ResponseObj<TeacherResponseChart>> GetListTeacherWithClassStudentAsync(RequestTeacherChart request)
         {
             var teacher = await _teacherRepository.GetStudentAndClassByTeacherName(request.TeacherName);

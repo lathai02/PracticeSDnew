@@ -1,7 +1,9 @@
 ﻿using AntDesign;
+using AutoMapper;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Shares.Constants;
+using Shares.Dtos;
 using Shares.Models;
 using StudentManagement.Services;
 using System.ServiceModel.Channels;
@@ -17,7 +19,11 @@ namespace StudentManagement.Pages
         [Inject]
         private INotificationService _notificationService { get; set; } = default!;
 
+        [Inject]
+        IMapper _mapper { get; set; }
+
         private List<Student> students = new();
+        private List<StudentDto> studentDtos = new();
         private List<Class> classList = new();
 
         private string? studentId;
@@ -105,7 +111,7 @@ namespace StudentManagement.Pages
             }
             await GetStudentCurrentPage(currentPage);
 
-            Close();          
+            Close();
             await ShowNotification(message, isEditMode ? "Update Student" : "Add student");
         }
 
@@ -128,7 +134,16 @@ namespace StudentManagement.Pages
         private async Task GetStudentCurrentPage(int currentPage = 1, bool isSortByName = false)
         {
             this.currentPage = currentPage;
-            students = await _studentManager.GetStudentListAsync(currentPage, pageSize, isSortByName);
+            students = await _studentManager.GetStudentListAsync(this.currentPage, pageSize, isSortByName);
+
+            // Kiểm tra nếu trang hiện tại không có dữ liệu và không phải là trang đầu tiên
+            if (students.Count == 0 && this.currentPage > 1)
+            {
+                this.currentPage--;
+                students = await _studentManager.GetStudentListAsync(this.currentPage, pageSize, isSortByName);
+            }
+
+            studentDtos = MapStudentsToDtos(students, this.currentPage, pageSize);
             totalStudents = await _studentManager.GetTotalCountAsync();
             StateHasChanged();
         }
@@ -185,8 +200,9 @@ namespace StudentManagement.Pages
                    selectedClassId == 0;
         }
 
-        private void UpdateStudent(Student student)
+        private void UpdateStudent(StudentDto studentDto)
         {
+            var student = _mapper.Map<Student>(studentDto);
             Open(student);
         }
 
@@ -229,6 +245,19 @@ namespace StudentManagement.Pages
                 NotificationType = type,
                 Duration = 4
             });
+        }
+
+        public List<StudentDto> MapStudentsToDtos(List<Student> students, int pageNumber, int pageSize)
+        {
+            var studentDtos = _mapper.Map<List<StudentDto>>(students);
+
+            int startNumber = (pageNumber - 1) * pageSize + 1;
+            for (int i = 0; i < studentDtos.Count; i++)
+            {
+                studentDtos[i].Number = startNumber + i;
+            }
+
+            return studentDtos;
         }
     }
 }

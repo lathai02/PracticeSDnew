@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Shares.Dtos;
 using Shares.Models;
 using Shares.ServiceContracts;
 using System;
@@ -72,6 +73,21 @@ namespace Shares.MappingProfiles
 
             // Map từ ClassResponse sang Class
             CreateMap<ClassResponse, Class>();
+
+            CreateMap<StudentDto, Student>()
+             .ForMember(dest => dest.ClassId, opt => opt.MapFrom(src => src.Class != null ? src.Class.Id : (int?)null))
+             .ForMember(dest => dest.Class, opt => opt.MapFrom(src => src.Class));
+
+            CreateMap<Class, Class>(); // Map Class nếu cần
+
+            CreateMap<Student, StudentDto>()
+               .ForMember(dest => dest.Number, opt => opt.Ignore())  // Number sẽ được gán riêng
+               .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+               .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+               .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
+               .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth))
+               .ForMember(dest => dest.Class, opt => opt.MapFrom(src => src.Class));
         }
+
     }
 }

@@ -37,5 +37,8 @@ namespace Shares.ServiceContracts
     {
         [OperationContract]
         Task<ResponseObj<TeacherResponseChart>> GetListTeacherWithClassStudentAsync(RequestTeacherChart request);
+
+        [OperationContract]
+        Task<ResponseObj<List<TeacherResponseChart>>> GetAllTeacher(Empty request);
     }
 }

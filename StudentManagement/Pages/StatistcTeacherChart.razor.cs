@@ -33,14 +33,6 @@ namespace StudentManagement.Pages
         List<ClassWithStudentsResponse> listClassWithStudentsResponse = new List<ClassWithStudentsResponse>();
         private string? txtValue { get; set; }
 
-
-        protected override async Task OnInitializedAsync()
-        {
-        }
-
-
-
-
         private async Task GetChartDataAsync(string name)
         {
             TeacherResponseChart teacher = await _studentManager.GetTeacherByNameAsync(name);

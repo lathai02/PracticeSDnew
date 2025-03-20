@@ -1,8 +1,10 @@
 ﻿@page "/teacher-statistics"
 @using AntDesign.Charts
+@using System.Globalization
 @using Title = AntDesign.Charts.Title
 @using AntDesign
 @using Shares.Dtos
+@using Shares.ServiceContracts
 
 <style>
     table {
@@ -25,10 +27,27 @@
         margin: 10px;
     }
 </style>
+
 <h1>Thống Kê theo giáo viên</h1>
 <div>
-    <Search Placeholder="input teacher name" OnChange="(e)=>HandleSearchBarAsync(e)" EnterButton="true" @bind-Value="@txtValue" />
+    <Select TItem="TeacherResponseChart"
+            TItemValue="string"
+            DataSource="@teachers"
+            @bind-Value="@_selectedValue"
+            LabelName="@nameof(TeacherResponseChart.Name)"
+            ValueName="@nameof(TeacherResponseChart.Name)"
+            Placeholder="Select a teacher"
+            DefaultActiveFirstOption="false"
+            EnableSearch
+            OnSelectedItemChanged="OnSelectedItemChangedHandlerAsync"
+            FilterExpression="(item, searchValue) => CultureInfo.CurrentCulture.CompareInfo.IndexOf(item.Label, searchValue, CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreCase) >= 0">
+    </Select>
 </div>
+
+
+@* <div>
+    <Search Placeholder="input teacher name" OnChange="(e)=>HandleSearchBarAsync(e)" EnterButton="true" @bind-Value="@txtValue" />
+</div> *@
 <br />
 @if (statisticConfig is not null && statistics?.Any() == true)
 {

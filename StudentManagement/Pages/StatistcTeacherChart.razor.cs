@@ -16,6 +16,7 @@ using OfficeOpenXml;
 using LicenseContext = OfficeOpenXml.LicenseContext;
 using Microsoft.JSInterop;
 using OfficeOpenXml.Style;
+using System;
 
 namespace StudentManagement.Pages
 {
@@ -32,6 +33,14 @@ namespace StudentManagement.Pages
         protected ColumnConfig? statisticConfig;
         List<ClassWithStudentsResponse> listClassWithStudentsResponse = new List<ClassWithStudentsResponse>();
         private string? txtValue { get; set; }
+        ClassWithStudentsResponse _selectedItem;
+        private string _selectedValue;
+        List<TeacherResponseChart> teachers = new List<TeacherResponseChart>();
+
+        protected override async Task OnInitializedAsync()
+        {
+            teachers = await _studentManager.GetAllTeacherAsync();
+        }
 
         private async Task GetChartDataAsync(string name)
         {
@@ -54,6 +63,12 @@ namespace StudentManagement.Pages
             };
 
             StateHasChanged();
+        }
+
+        private async Task OnSelectedItemChangedHandlerAsync(TeacherResponseChart value)
+        {
+            txtValue = value.Name;
+            await GetChartDataAsync(value.Name);
         }
 
         private List<TeacherStatistic> GetTeacherStatisticAsync(List<ClassWithStudentsResponse> classWithStudentsResponse)

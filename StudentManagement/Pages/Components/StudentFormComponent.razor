@@ -1,0 +1,222 @@
+﻿@using AntDesign
+@using AutoMapper
+@using Shares.Models
+@using Shares.Constants
+@using StudentManagement.Pages
+@using StudentManagement.Services
+
+@code {
+    [Inject]
+    private StudentService _studentManager { get; set; } = default!;
+
+    [Inject]
+    private INotificationService _notificationService { get; set; } = default!;
+
+    [Inject]
+    IMapper _mapper { get; set; }
+
+    [Parameter] public EventCallback<int> OnDone { get; set; }
+
+    private Class? selectedClass;
+    private bool visible;
+    private bool isEditMode = false;
+    private string? studentId;
+    private string? studentName;
+    private DateTime? studentDob;
+    private string? studentAddress;
+    private int selectedClassId;
+    private List<Class> classList = new();
+    private bool isSubmitted = false;
+    private string? studentIdError;
+
+    protected override async Task OnInitializedAsync()
+    {
+        classList = await _studentManager.GetAllClassesAsync();
+        selectedClass = classList[0];
+    }
+
+    private void SetStudentDetails(Student student)
+    {
+        studentId = student.Id;
+        studentName = student.Name;
+        studentAddress = student.Address;
+        studentDob = student.DateOfBirth;
+        selectedClassId = student.Class?.Id ?? 0;
+        selectedClass = classList.FirstOrDefault(c => c.Id == selectedClassId);
+    }
+
+    public void Open(Student student)
+    {
+        SetStudentDetails(student);
+        isEditMode = true;
+        visible = true;
+    }
+
+    public void Open()
+    {
+        ResetForm();
+        isEditMode = false;
+        visible = true;
+    }
+
+    private void Close() => visible = false;
+
+    private void ResetForm()
+    {
+        studentId = string.Empty;
+        studentName = string.Empty;
+        studentAddress = string.Empty;
+        studentDob = null;
+        selectedClassId = 0;
+        isSubmitted = false;
+        studentIdError = string.Empty;
+    }
+
+    private async Task SubmitForm()
+    {
+        isSubmitted = true;
+
+        if (IsFormInvalid() || !ValidateStudentId(studentId))
+        {
+            return;
+        }
+
+        Student s = new Student
+            {
+                Id = studentId ?? "",
+                Name = studentName ?? "",
+                Address = studentAddress ?? "",
+                DateOfBirth = studentDob ?? default,
+                Class = classList.FirstOrDefault(c => c.Id == selectedClassId)
+            };
+
+        string message;
+        if (isEditMode)
+        {
+            message = await _studentManager.AddOrUpdateStudentAsync(s, true);
+
+        }
+        else
+        {
+            message = await _studentManager.AddOrUpdateStudentAsync(s);
+        }
+        await OnDone.InvokeAsync();
+
+        Close();
+        await ShowNotification(message, isEditMode ? "Update Student" : "Add student");
+    }
+
+    private bool IsFormInvalid()
+    {
+        return string.IsNullOrEmpty(studentId) ||
+               string.IsNullOrEmpty(studentName) ||
+               studentDob == default ||
+               string.IsNullOrEmpty(studentAddress) ||
+               selectedClassId == 0;
+    }
+
+    private bool ValidateStudentId(string value)
+    {
+        studentId = value;
+        bool isValid = System.Text.RegularExpressions.Regex.IsMatch(studentId, AppConstants.STUDENT_ID_PARTERN);
+        studentIdError = isValid ? null : "Student ID không hợp lệ. Định dạng: AA123456.";
+        return isValid;
+    }
+
+    protected async Task ShowNotification(string title, string message, NotificationType type = NotificationType.Success)
+    {
+        Console.WriteLine($"ShowNotification called: {title} - {message}");
+        if (_notificationService == null)
+        {
+            Console.WriteLine("NotificationService is null!");
+            return;
+        }
+
+        await _notificationService.Open(new NotificationConfig()
+            {
+                Message = title,
+                Description = message,
+                NotificationType = type,
+                Duration = 4
+            });
+    }
+
+    private void OnSelectedItemChangedHandler(Class value)
+    {
+        selectedClass = value;
+    }
+}
+
+
+<Drawer Closable="true" Width="720" Visible="@visible" OnClose="Close">
+    <Template style="height:90%">
+        <h3>@(isEditMode ? "Edit Student" : "Add Student")</h3>
+        <br />
+        <div class="student-form">
+            <div class="form-item">
+                <Text>Id:</Text>
+                <Input @bind-Value="@studentId" Disabled="@isEditMode" />
+                @if (isSubmitted && string.IsNullOrEmpty(studentId))
+                {
+                    <Alert Message="Id is required" Type="AlertType.Error" ShowIcon="true" />
+                }
+                @if (!string.IsNullOrEmpty(studentIdError))
+                {
+                    <Alert Message="@studentIdError" Type="AlertType.Error" ShowIcon="true" />
+                }
+            </div>
+
+            <div class="form-item">
+                <Text>Name:</Text>
+                <Input @bind-Value="@studentName" />
+                @if (isSubmitted && string.IsNullOrEmpty(studentName))
+                {
+                    <Alert Message="Name is required" Type="AlertType.Error" ShowIcon="true" />
+                }
+            </div>
+
+            <div class="form-item">
+                <Text>Date of birth:</Text>
+                <DatePicker @bind-Value="@studentDob" Format="@AppConstants.DATE_FORMAT" />
+                @if (isSubmitted && studentDob == default)
+                {
+                    <Alert Message="Date of birth is required" Type="AlertType.Error" ShowIcon="true" />
+                }
+            </div>
+
+            <div class="form-item">
+                <Text>Address:</Text>
+                <Input @bind-Value="@studentAddress" />
+                @if (isSubmitted && string.IsNullOrEmpty(studentAddress))
+                {
+                    <Alert Message="Address is required" Type="AlertType.Error" ShowIcon="true" />
+                }
+            </div>
+
+            <div class="form-item">
+                <Text>Class:</Text>
+                <Select TItem="Class"
+                        TItemValue="int"
+                        DataSource="@classList"
+                        @bind-Value="@selectedClassId"
+                        ValueName="@nameof(Class.Id)"
+                        LabelName="@nameof(Class.Name)"
+                        GroupName="@nameof(Class.Subject)"
+                        SortByLabel="SortDirection.Ascending"
+                        SortByGroup="SortDirection.Ascending"
+                        OnSelectedItemChanged="OnSelectedItemChangedHandler"
+                        DefaultActiveFirstOption="true"
+                        Style="width: 100%;">
+                </Select>
+                @if (isSubmitted && selectedClassId == 0)
+                {
+                    <Alert Message="Class is required" Type="AlertType.Error" ShowIcon="true" />
+                }
+            </div>
+
+            <Button Type="ButtonType.Primary" OnClick="SubmitForm">
+                @(isEditMode ? "Update" : "Submit")
+            </Button>
+        </div>
+    </Template>
+</Drawer>

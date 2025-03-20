@@ -4,6 +4,7 @@
 @using Shares.Constants
 @using System.Globalization
 @using Shares.Models
+@using StudentManagement.Pages.Components
 
 <style>
     .ant-notification {
@@ -132,79 +133,9 @@
 <h3>StudentManager</h3>
 <Notification />
 <div>
-    <Button Icon="@IconType.Outline.Plus" Type="ButtonType.Primary" @onclick="() => Open()">Create a new student</Button>
-    <Drawer Closable="true" Width="720" Visible="@visible" OnClose="Close">
-        <Template style="height:90%">
-            <h3>@(isEditMode ? "Edit Student" : "Add Student")</h3>
-            <br />
-            <div class="student-form">
-                <div class="form-item">
-                    <Text>Id:</Text>
-                    <Input @bind-Value="@studentId" OnChange="@OnStudentIdChange" Disabled="@isEditMode" />
-                    @if (isSubmitted && string.IsNullOrEmpty(studentId))
-                    {
-                        <Alert Message="Id is required" Type="AlertType.Error" ShowIcon="true" />
-                    }
-                    @if (!string.IsNullOrEmpty(studentIdError))
-                    {
-                        <Alert Message="@studentIdError" Type="AlertType.Error" ShowIcon="true" />
-                    }
-                </div>
+    <Button Icon="@IconType.Outline.Plus" Type="ButtonType.Primary" @onclick="() => OpenStudentFormComponent()">Create a new student</Button>
+    <StudentFormComponent @ref="studentFormComponent" OnDone="@(() => GetStudentCurrentPage(currentPage))" />
 
-                <div class="form-item">
-                    <Text>Name:</Text>
-                    <Input @bind-Value="@studentName" />
-                    @if (isSubmitted && string.IsNullOrEmpty(studentName))
-                    {
-                        <Alert Message="Name is required" Type="AlertType.Error" ShowIcon="true" />
-                    }
-                </div>
-
-                <div class="form-item">
-                    <Text>Date of birth:</Text>
-                    <DatePicker @bind-Value="@studentDob" Format="@AppConstants.DATE_FORMAT" OnChange="@OnStudentDobChange" />
-                    @if (isSubmitted && studentDob == default)
-                    {
-                        <Alert Message="Date of birth is required" Type="AlertType.Error" ShowIcon="true" />
-                    }
-                </div>
-
-                <div class="form-item">
-                    <Text>Address:</Text>
-                    <Input @bind-Value="@studentAddress" />
-                    @if (isSubmitted && string.IsNullOrEmpty(studentAddress))
-                    {
-                        <Alert Message="Address is required" Type="AlertType.Error" ShowIcon="true" />
-                    }
-                </div>
-
-                <div class="form-item">
-                    <Text>Class:</Text>
-                    <Select TItem="Class"
-                            TItemValue="int"
-                            DataSource="@classList"
-                            @bind-Value="@selectedClassId"
-                            ValueName="@nameof(Class.Id)"
-                            LabelName="@nameof(Class.Name)"
-                            GroupName="@nameof(Class.Subject)"
-                            SortByLabel="SortDirection.Ascending"
-                            SortByGroup="SortDirection.Ascending"
-                            OnSelectedItemChanged="OnSelectedItemChangedHandler"
-                            DefaultActiveFirstOption="true"
-                            Style="width: 100%;">
-                    </Select>
-                    @if (isSubmitted && selectedClassId == 0)
-                    {
-                        <Alert Message="Class is required" Type="AlertType.Error" ShowIcon="true" />
-                    }
-                </div>
-
-                <Button Type="ButtonType.Primary" OnClick="SubmitForm">
-                    @(isEditMode ? "Update" : "Submit")
-                </Button>
-            </div>
-        </Template>
-    </Drawer>
 </div>
 <br />
 

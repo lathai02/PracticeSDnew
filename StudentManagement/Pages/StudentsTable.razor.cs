@@ -27,12 +27,26 @@ namespace StudentManagement.Pages
         private int currentPage = 1;
         private int pageSize = AppConstants.PAGE_SIZE;
         private int totalStudents = 0;
-        private bool isSortByName { get; set; } = false;
+
+        private string selectedSortOption = "Id";
+
+        private List<SortOption> sortOptions = new List<SortOption>
+        {
+            new SortOption { Value = "Name", Label = "Sort by Name" },
+            new SortOption { Value = "DateOfBirth", Label = "Sort by Date of Birth" },
+            new SortOption { Value = "Id", Label = "Sort by Id" }
+        };
 
         protected override async Task OnInitializedAsync()
         {
-            await GetStudentCurrentPage(1);
+            await LoadDataAsync(1, selectedSortOption);
             totalStudents = await _studentManager.GetTotalCountAsync();
+        }
+
+        private async void OnSortOptionChanged(SortOption option)
+        {
+            selectedSortOption = option.Value;
+            await LoadDataAsync(currentPage, selectedSortOption);
         }
 
         private async Task Handle(string value)
@@ -41,7 +55,7 @@ namespace StudentManagement.Pages
 
             if (string.IsNullOrEmpty(value))
             {
-                await GetStudentCurrentPage(currentPage);
+                await LoadDataAsync(currentPage, selectedSortOption); // Thêm currentSortField vào đây
                 StateHasChanged();
                 return;
             }
@@ -59,11 +73,6 @@ namespace StudentManagement.Pages
             StateHasChanged();
         }
 
-        private async Task OnSortByNameChanged()
-        {
-            await GetStudentCurrentPage(currentPage, isSortByName);
-        }
-
         private void OpenStudentFormComponent()
         {
             studentFormComponent.Open();
@@ -73,7 +82,7 @@ namespace StudentManagement.Pages
         {
             var res = await _studentManager.DeleteStudentAsync(id);
 
-            await GetStudentCurrentPage(currentPage);
+            await LoadDataAsync(currentPage, selectedSortOption); // Thêm currentSortField vào đây
 
             if (!string.IsNullOrEmpty(res))
             {
@@ -85,16 +94,17 @@ namespace StudentManagement.Pages
             }
         }
 
-        private async Task GetStudentCurrentPage(int currentPage, bool isSortByName = false)
+
+        private async Task LoadDataAsync(int currentPage, string sortField)
         {
             this.currentPage = currentPage;
-            students = await _studentManager.GetStudentListAsync(this.currentPage, pageSize, isSortByName);
+            students = await _studentManager.GetStudentListAsync(this.currentPage, pageSize, sortField);
 
             // Kiểm tra nếu trang hiện tại không có dữ liệu và không phải là trang đầu tiên
             if (students.Count == 0 && this.currentPage > 1)
             {
                 this.currentPage--;
-                students = await _studentManager.GetStudentListAsync(this.currentPage, pageSize, isSortByName);
+                students = await _studentManager.GetStudentListAsync(this.currentPage, pageSize, sortField);
             }
 
             studentDtos = MapStudentsToDtos(students, this.currentPage, pageSize);
@@ -105,8 +115,9 @@ namespace StudentManagement.Pages
         private async Task HandlePageChange(PaginationEventArgs args)
         {
             currentPage = args.Page;
-            await GetStudentCurrentPage(currentPage, isSortByName);
+            await LoadDataAsync(currentPage, selectedSortOption); // Truyền currentSortField thay vì isSortByName
         }
+
 
         private void UpdateStudent(StudentDto studentDto)
         {
@@ -131,7 +142,6 @@ namespace StudentManagement.Pages
                 Duration = 4
             });
         }
-
         public List<StudentDto> MapStudentsToDtos(List<Student> students, int pageNumber, int pageSize)
         {
             var studentDtos = _mapper.Map<List<StudentDto>>(students);

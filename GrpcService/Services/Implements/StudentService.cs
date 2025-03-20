@@ -136,5 +136,21 @@ namespace GrpcService.Services.Implements
                 return CreateResponse<ResponseNumber>(null, "Error when getting total count of student!");
             }
         }
+
+        public async Task<ResponseObj<StudentListResponse>> SortStudentListByOptAsync(PagingRequestSort request)
+        {
+            try
+            {
+                var students = await _studentRepository.GetStudentListAsync(request.PageNumber, request.PageSize, request.SortBy);
+                var studentListResponse = _mapper.Map<StudentListResponse>(students);
+
+                var message = students.Count > 0 ? "Sort student list by name successfully." : "No student found!";
+                return CreateResponse(studentListResponse, message);
+            }
+            catch (Exception)
+            {
+                return CreateResponse<StudentListResponse>(null, "Error when sorting student list by name!");
+            }
+        }
     }
 }

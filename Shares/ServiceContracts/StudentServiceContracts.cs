@@ -109,5 +109,8 @@ namespace Shares.ServiceContracts
 
         [OperationContract]
         Task<ResponseObj<ResponseNumber>> GetTotalCountAsync(Empty empty);
+
+        [OperationContract]
+        Task<ResponseObj<StudentListResponse>> SortStudentListByOptAsync(PagingRequestSort request);
     }
 }

@@ -27,12 +27,11 @@ namespace StudentManagement.Services
             return response.Data!;
         }
 
-        public async Task<List<Student>> GetStudentListAsync(int pageNumber, int pageSize, bool sorted = false)
+        public async Task<List<Student>> GetStudentListAsync(int pageNumber, int pageSize, string? sortBy)
         {
-            var request = new PagingRequest { PageNumber = pageNumber, PageSize = pageSize };
-            var response = sorted
-                ? await _studentProto.SortStudentListByNameAsync(request)
-                : await _studentProto.GetListStudentAsync(request);
+            var response = sortBy != null
+                ? await _studentProto.SortStudentListByOptAsync(new PagingRequestSort { PageNumber = pageNumber, PageSize = pageSize, SortBy = sortBy })
+                : await _studentProto.GetListStudentAsync(new PagingRequest { PageNumber = pageNumber, PageSize = pageSize });
 
             return _mapper.Map<List<Student>>(response.Data);
         }

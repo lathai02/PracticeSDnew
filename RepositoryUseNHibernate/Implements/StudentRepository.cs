@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq.Expressions;
 
 namespace RepositoriesUseNHibernate.Implements
 {
@@ -55,5 +56,42 @@ namespace RepositoriesUseNHibernate.Implements
 
             return new List<Student>();
         }
+
+        public async Task<List<Student>> GetStudentListAsync(int pageNumber, int pageSize, string sortBy, bool isAscending = true)
+        {
+            try
+            {
+                var query = _session.Query<Student>()
+                                    .Fetch(s => s.Class);
+
+                // Tạo biểu thức sắp xếp động
+                var parameter = Expression.Parameter(typeof(Student), "s");
+                var property = Expression.Property(parameter, sortBy);
+                var lambda = Expression.Lambda(property, parameter);
+
+                // Áp dụng sắp xếp
+                var orderByMethod = isAscending ? "OrderBy" : "OrderByDescending";
+                var orderByCall = Expression.Call(
+                    typeof(Queryable),
+                    orderByMethod,
+                    new Type[] { typeof(Student), property.Type },
+                    query.Expression,
+                    Expression.Quote(lambda)
+                );
+
+                var sortedQuery = query.Provider.CreateQuery<Student>(orderByCall)
+                                        .Skip((pageNumber - 1) * pageSize)
+                                        .Take(pageSize);
+
+                return await sortedQuery.ToListAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+
+            return new List<Student>();
+        }
+
     }
 }

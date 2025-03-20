@@ -5,6 +5,7 @@
 @using System.Globalization
 @using Shares.Models
 @using StudentManagement.Pages.Components
+@using Shares.Dtos
 
 <style>
     .ant-notification {
@@ -134,8 +135,7 @@
 <Notification />
 <div>
     <Button Icon="@IconType.Outline.Plus" Type="ButtonType.Primary" @onclick="() => OpenStudentFormComponent()">Create a new student</Button>
-    <StudentFormComponent @ref="studentFormComponent" OnDone="@(() => GetStudentCurrentPage(currentPage))" />
-
+    <StudentFormComponent @ref="studentFormComponent" OnDone="@(() => LoadDataAsync(currentPage, selectedSortOption))" />
 </div>
 <br />
 
@@ -143,10 +143,18 @@
     <Search Placeholder="input search text" OnChange="(e)=>Handle(e)" EnterButton="true" @bind-Value="@txtValue" />
 </div>
 <br />
-<div>
-    Sort by name
-    <Switch @bind-Checked="isSortByName" onchange="OnSortByNameChanged" />
-</div>
+<Select TItem="SortOption"
+        TItemValue="string"
+        DataSource="@sortOptions"
+        @bind-Value="@selectedSortOption"
+        ValueName="@nameof(SortOption.Value)"
+        LabelName="@nameof(SortOption.Label)"
+        OnSelectedItemChanged="OnSortOptionChanged"
+        DefaultActiveFirstOption="true"
+        Style="width: 100%;">
+</Select>
+
+<br />
 <Table DataSource="@studentDtos" Bordered="true" Size="TableSize.Middle">
     <PropertyColumn Property="s=>s.Number"></PropertyColumn>
     <PropertyColumn Property="s=>s.Id"></PropertyColumn>

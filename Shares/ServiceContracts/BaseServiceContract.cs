@@ -28,6 +28,19 @@ namespace Shares.ServiceContracts
     }
 
     [DataContract]
+    public class PagingRequestSort
+    {
+        [DataMember(Order = 1)]
+        public int PageNumber { get; set; }
+
+        [DataMember(Order = 2)]
+        public int PageSize { get; set; }
+
+        [DataMember(Order = 3)]
+        public string SortBy { get; set; }
+    }
+
+    [DataContract]
     public class ResponseObj<T>
     {
         [DataMember(Order = 1)]

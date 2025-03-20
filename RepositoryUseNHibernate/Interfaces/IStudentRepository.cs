@@ -11,5 +11,6 @@ namespace RepositoriesUseNHibernate.Interfaces
     {
         Task<List<Student>> GetStudentListWithClassAsync(int pageNumber, int pageSize);
         Task<List<Student>> GetStudentListSortByNameAsync(int pageNumber, int pageSize);
+        Task<List<Student>> GetStudentListAsync(int pageNumber, int pageSize, string sortBy, bool isAscending = true);
     }
 }

@@ -39,7 +39,7 @@ namespace StudentManagement.Pages
             listClassWithStudentsResponse = _mapper.Map<List<ClassWithStudentsResponse>>(teacher);
             statistics = null;
             StateHasChanged();
-            statistics = GetTeacherStatistic(listClassWithStudentsResponse);
+            statistics = GetTeacherStatisticAsync(listClassWithStudentsResponse);
             await Task.Delay(100);
 
             statisticConfig = new ColumnConfig
@@ -56,7 +56,7 @@ namespace StudentManagement.Pages
             StateHasChanged();
         }
 
-        private List<TeacherStatistic> GetTeacherStatistic(List<ClassWithStudentsResponse> classWithStudentsResponse)
+        private List<TeacherStatistic> GetTeacherStatisticAsync(List<ClassWithStudentsResponse> classWithStudentsResponse)
         {
 
             List<TeacherStatistic> res = new List<TeacherStatistic>();
@@ -81,13 +81,13 @@ namespace StudentManagement.Pages
             return res;
         }
 
-        private async Task Handle(string value)
+        private async Task HandleSearchBarAsync(string value)
         {
             txtValue = value;
             await GetChartDataAsync(txtValue);
         }
 
-        private async Task ExportFileExcel()
+        private async Task ExportFileExcelAsync()
         {
             // Lấy ngày và giờ hiện tại theo định dạng yyyyMMdd_HHmmss
             string currentDateTime = DateTime.Now.ToString("yyyyMMdd_HHmmss");
@@ -154,7 +154,7 @@ namespace StudentManagement.Pages
                     worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
 
                     // Save
-                    File.WriteAllBytes(filePath, package.GetAsByteArray());
+                    await File.WriteAllBytesAsync(filePath, await package.GetAsByteArrayAsync());
                     Console.WriteLine($"File saved at: {filePath}");
                 }
             }

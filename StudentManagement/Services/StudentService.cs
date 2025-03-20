@@ -24,7 +24,7 @@ namespace StudentManagement.Services
         public async Task<TeacherResponseChart> GetTeacherByNameAsync(string teacherName)
         {
             var response = await _teacherProto.GetListTeacherWithClassStudentAsync(new RequestTeacherChart { TeacherName = teacherName });
-            return response.Data;
+            return response.Data!;
         }
 
         public async Task<List<Student>> GetStudentListAsync(int pageNumber, int pageSize, bool sorted = false)
@@ -40,7 +40,7 @@ namespace StudentManagement.Services
         public async Task<int> GetTotalCountAsync()
         {
             var response = await _studentProto.GetTotalCountAsync(new Empty());
-            return response.Data.TotalItem;
+            return response.Data!.TotalItem;
         }
 
         public async Task<string> AddOrUpdateStudentAsync(Student student, bool isUpdate = false)

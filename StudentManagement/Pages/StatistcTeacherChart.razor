@@ -27,7 +27,7 @@
 </style>
 <h1>Thống Kê theo giáo viên</h1>
 <div>
-    <Search Placeholder="input teacher name" OnChange="(e)=>Handle(e)" EnterButton="true" @bind-Value="@txtValue" />
+    <Search Placeholder="input teacher name" OnChange="(e)=>HandleSearchBarAsync(e)" EnterButton="true" @bind-Value="@txtValue" />
 </div>
 <br />
 @if (statisticConfig is not null && statistics?.Any() == true)
@@ -46,7 +46,7 @@
 @if (statisticConfig is not null && statistics?.Any() == true)
 {
     <h1>Class with Students</h1>
-     <Button Type="ButtonType.Primary" @onclick="() => ExportFileExcel()">Export to excel</Button>
+     <Button Type="ButtonType.Primary" @onclick="() => ExportFileExcelAsync()">Export to excel</Button>
 }
 
 @foreach (var subject in listClassWithStudentsResponse)

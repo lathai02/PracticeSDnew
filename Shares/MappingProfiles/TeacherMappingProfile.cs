@@ -20,7 +20,7 @@ namespace Shares.MappingProfiles
 
             // Map từ Class sang ClassResponseChart
             CreateMap<Class, ClassResponseChart>()
-                .ForMember(dest => dest.TeacherName, opt => opt.MapFrom(src => src.Teacher.Name));
+                .ForMember(dest => dest.TeacherName, opt => opt.MapFrom(src => src.Teacher!.Name));
 
             // Map từ Student sang StudentResponseChart
             CreateMap<Student, StudentResponseChart>()
@@ -28,7 +28,7 @@ namespace Shares.MappingProfiles
                 .ForMember(dest => dest.StudentName, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.StudentDateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth.ToString("yyyy-MM-dd")))
                 .ForMember(dest => dest.StudentAddress, opt => opt.MapFrom(src => src.Address))
-                .ForMember(dest => dest.ClassName, opt => opt.MapFrom(src => src.Class.Name));
+                .ForMember(dest => dest.ClassName, opt => opt.MapFrom(src => src.Class!.Name));
 
             CreateMap<TeacherResponseChart, List<ClassWithStudentsResponse>>()
                       .ConvertUsing(src =>

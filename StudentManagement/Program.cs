@@ -19,7 +19,9 @@ builder.Services.AddSingleton(serviceProvider =>
     serviceProvider.GetRequiredService<GrpcChannel>().CreateGrpcService<IStudentProto>());
 builder.Services.AddSingleton(serviceProvider =>
     serviceProvider.GetRequiredService<GrpcChannel>().CreateGrpcService<IClassProto>());
-builder.Services.AddAutoMapper(typeof(ClassMappingProfile), typeof(StudentMappingProfile));
+builder.Services.AddSingleton(serviceProvider =>
+    serviceProvider.GetRequiredService<GrpcChannel>().CreateGrpcService<ITeacherProto>());
+builder.Services.AddAutoMapper(typeof(ClassMappingProfile), typeof(StudentMappingProfile), typeof(TeacherMappingProfile));
 builder.Services.AddSingleton<StudentService>();
 
 var app = builder.Build();

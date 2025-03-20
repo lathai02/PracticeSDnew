@@ -12,6 +12,7 @@
     <PackageReference Include="AntDesign.Charts" Version="0.5.8" />
     <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="Blazor.ECharts" Version="1.0.4" />
+    <PackageReference Include="EPPlus" Version="7.7.0" />
     <PackageReference Include="FluentNHibernate" Version="3.4.0" />
     <PackageReference Include="Grpc.Net.Client" Version="2.70.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.3" />

@@ -17,7 +17,7 @@ namespace RepositoriesUseNHibernate.Mappings
             Map(x => x.Name);
             Map(x => x.DateOfBirth);
 
-            HasMany(x => x.Classes).KeyColumn("TeacherId").Inverse().Cascade.All();
+            HasMany(x => x.Classes).KeyColumn("TeacherId").Cascade.All().Inverse().Not.LazyLoad();
         }
     }
 }

@@ -2,38 +2,99 @@
 @using AntDesign.Charts
 @using Title = AntDesign.Charts.Title
 @using AntDesign
+@using Shares.Dtos
 
-<Tabs>
-    <TabPane Key="1">
-        <TabTemplate>Thống kê môn học của Thầy Thái</TabTemplate>
-        <ChildContent>
-            <AntDesign.Charts.Column Data="data1" Config="config1" />
-        </ChildContent>
-    </TabPane>
-</Tabs>
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
 
-@code {
-    object[] data1 = new object[] {
-        new { Subject = "Toán", Type = "Số lượng lớp", Value = 5 },
-        new { Subject = "Toán", Type = "Số học sinh", Value = 150 },
-        new { Subject = "Văn", Type = "Số lượng lớp", Value = 4 },
-        new { Subject = "Văn", Type = "Số học sinh", Value = 120 },
-        new { Subject = "Anh", Type = "Số lượng lớp", Value = 6 },
-        new { Subject = "Anh", Type = "Số học sinh", Value = 180 },
-        new { Subject = "Lý", Type = "Số lượng lớp", Value = 3 },
-        new { Subject = "Lý", Type = "Số học sinh", Value = 90 },
-        new { Subject = "Hoá", Type = "Số lượng lớp", Value = 2 },
-        new { Subject = "Hoá", Type = "Số học sinh", Value = 60 },
-    };
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
 
-    ColumnConfig config1 = new()
-        {
-            IsGroup = true,
-            XField = "subject",
-            YField = "value",
-            YAxis = new ValueAxis() { Min = 0 },
-            Label = new ColumnViewConfigLabel() { Visible = true },
-            SeriesField = "type",
-            Color = new string[] { "#1ca9e6", "#f88c24" },
-        };
+    th {
+        background-color: #f2f2f2;
+    }
+
+    .nested-table {
+        margin: 10px;
+    }
+</style>
+<h1>Thống Kê theo giáo viên</h1>
+<div>
+    <Search Placeholder="input teacher name" OnChange="(e)=>Handle(e)" EnterButton="true" @bind-Value="@txtValue" />
+</div>
+<br />
+@if (statisticConfig is not null && statistics?.Any() == true)
+{
+    <Tabs>
+        <TabPane Key="1">
+            <TabTemplate>Thống kê môn học</TabTemplate>
+            <ChildContent>
+
+                <AntDesign.Charts.Column Data="statistics" Config="statisticConfig" />
+            </ChildContent>
+        </TabPane>
+    </Tabs>
+}
+
+@if (statisticConfig is not null && statistics?.Any() == true)
+{
+    <h1>Class with Students</h1>
+     <Button Type="ButtonType.Primary" @onclick="() => ExportFileExcel()">Export to excel</Button>
+}
+
+@foreach (var subject in listClassWithStudentsResponse)
+{
+    <h2>@subject.SubjectName</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Class Name</th>
+                <th>Teacher Name</th>
+                <th>Student ID</th>
+                <th>Student Name</th>
+                <th>Date of Birth</th>
+                <th>Address</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var classItem in subject.Classes)
+            {
+                var rowSpan = classItem.Students.Count;
+                if (rowSpan == 0)
+                {
+                    <tr>
+                        <td>@classItem.Name</td>
+                        <td>@classItem.TeacherName</td>
+                        <td colspan="4" style="text-align: center;">No Students</td>
+                    </tr>
+                }
+                else
+                {
+                    bool firstStudent = true;
+                    @foreach (var student in classItem.Students)
+                    {
+                        <tr>
+                            @if (firstStudent)
+                            {
+                                <td rowspan="@rowSpan">@classItem.Name</td>
+                                <td rowspan="@rowSpan">@classItem.TeacherName</td>
+                                firstStudent = false;
+                            }
+                            <td>@student.StudentId</td>
+                            <td>@student.StudentName</td>
+                            <td>@student.StudentDateOfBirth</td>
+                            <td>@student.StudentAddress</td>
+                        </tr>
+                    }
+                }
+            }
+        </tbody>
+    </table>
 }

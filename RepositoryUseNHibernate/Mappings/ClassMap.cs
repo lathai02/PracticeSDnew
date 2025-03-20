@@ -16,10 +16,9 @@ namespace RepositoriesUseNHibernate.Mappings
             Id(x => x.Id);
             Map(x => x.Name);
             Map(x => x.Subject);
-            //Map(x => x.TeacherId).Nullable();
 
             // LazyLoad(): The Teacher property will be loaded only when it is accessed.
-            References(x => x.Teacher).Column("TeacherId").LazyLoad();
+            References(x => x.Teacher).Column("TeacherId");
 
             // Inverse(): The Students collection is the inverse side of the relationship.
             HasMany(x => x.Students).KeyColumn("ClassId").Inverse().Cascade.All();

@@ -19,7 +19,7 @@ string connectionString = builder.Configuration.GetConnectionString("MyConnectio
 builder.Services.AddSingleton(factory =>
 {
     return Fluently.Configure()
-        .Database(MsSqlConfiguration.MsSql2012.ConnectionString(connectionString))
+        .Database(MsSqlConfiguration.MsSql2012.ConnectionString(connectionString).ShowSql())
         .Mappings(m => m.FluentMappings
             .AddFromAssemblyOf<StudentMap>()
             .AddFromAssemblyOf<ClassMap>()
@@ -34,6 +34,7 @@ builder.Services.AddScoped(provider => provider.GetRequiredService<ISessionFacto
 builder.Services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped<IClassRepository, ClassRepository>();
+builder.Services.AddScoped<ITeacherRepository, TeacherRepository>();
 
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(ClassMappingProfile), typeof(StudentMappingProfile));
@@ -46,11 +47,13 @@ builder.Services.AddGrpcReflection();
 // Proto Service
 builder.Services.AddScoped<IStudentProto, StudentService>();
 builder.Services.AddScoped<IClassProto, ClassService>();
+builder.Services.AddScoped<ITeacherProto, TeacherService>();
 
 var app = builder.Build();
 
 // Map gRPC Services
 app.MapGrpcService<StudentService>();
+app.MapGrpcService<TeacherService>();
 app.MapGrpcService<ClassService>();
 
 // gRPC Reflection (chỉ dùng khi phát triển)

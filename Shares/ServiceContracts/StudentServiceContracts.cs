@@ -67,6 +67,25 @@ namespace Shares.ServiceContracts
         public List<StudentResponse> Students { get; set; } = new List<StudentResponse>();
     }
 
+    [DataContract]
+    public class StudentResponseChart
+    {
+        [DataMember(Order = 1)]
+        public string StudentId { get; set; } = null!;
+
+        [DataMember(Order = 2)]
+        public string StudentName { get; set; } = null!;
+
+        [DataMember(Order = 3)]
+        public string StudentDateOfBirth { get; set; } = null!;
+
+        [DataMember(Order = 4)]
+        public string StudentAddress { get; set; } = null!;
+
+        [DataMember(Order = 5)]
+        public string ClassName { get; set; } = null!;
+    }
+
     [ServiceContract]
     public interface IStudentProto
     {

@@ -15,7 +15,7 @@ namespace StudentManagement.Pages
         private StudentService _studentManager { get; set; } = default!;
 
         [Inject]
-        private NotificationService _notificationService { get; set; } = default!;
+        private INotificationService _notificationService { get; set; } = default!;
 
         private List<Student> students = new();
         private List<Class> classList = new();

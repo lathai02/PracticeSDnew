@@ -10,13 +10,21 @@ namespace StudentManagement.Services
     {
         private readonly IStudentProto _studentProto;
         private readonly IClassProto _classProto;
+        private readonly ITeacherProto _teacherProto;
         private readonly IMapper _mapper;
 
-        public StudentService(IStudentProto studentProto, IClassProto classProto, IMapper mapper)
+        public StudentService(IStudentProto studentProto, IClassProto classProto, IMapper mapper, ITeacherProto teacherProto)
         {
             _studentProto = studentProto;
             _classProto = classProto;
             _mapper = mapper;
+            _teacherProto = teacherProto;
+        }
+
+        public async Task<TeacherResponseChart> GetTeacherByNameAsync(string teacherName)
+        {
+            var response = await _teacherProto.GetListTeacherWithClassStudentAsync(new RequestTeacherChart { TeacherName = teacherName });
+            return response.Data;
         }
 
         public async Task<List<Student>> GetStudentListAsync(int pageNumber, int pageSize, bool sorted = false)
